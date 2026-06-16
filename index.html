@@ -165,7 +165,15 @@
             border-radius: 50%;
         }
 
-        .next-btn {
+        /* ===== TRANSPORT BUTTONS ===== */
+        .transport-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 8px 0 12px;
+            flex-wrap: wrap;
+        }
+        .transport-btn {
             background: linear-gradient(95deg, #3d2e74, #221d4a);
             border: none;
             color: white;
@@ -180,11 +188,17 @@
             transition: all 0.2s;
             box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(160, 130, 255, 0.5);
+            flex: 0 1 auto;
         }
-        .next-btn:hover {
+        .transport-btn:hover {
             background: linear-gradient(95deg, #5a45a0, #3a2a6e);
-            gap: 14px;
             transform: scale(1.02);
+        }
+        .transport-btn:active {
+            transform: scale(0.97);
+        }
+        .transport-btn i {
+            font-size: 0.9rem;
         }
 
         .search-container {
@@ -370,6 +384,14 @@
             .track-title {
                 font-size: 1rem;
             }
+            .transport-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.75rem;
+                gap: 6px;
+            }
+            .transport-row {
+                gap: 8px;
+            }
         }
     </style>
 </head>
@@ -377,7 +399,7 @@
     <div class="player-card">
         <div class="player-header">
             <h1><i class="fas fa-headphones"></i> Music Player</h1>
-            <div class="badge"><i class="fas fa-waveform"></i> grup · putar · cari</div>
+            <div class="badge"><i class="fas fa-waveform"></i> santai sedih pagi</div>
         </div>
 
         <div class="now-playing-area">
@@ -390,8 +412,10 @@
 
         <audio id="audio-player" controls preload="metadata"></audio>
 
-        <div style="display: flex; justify-content: center; margin: 8px 0 12px;">
-            <button id="next-button" class="next-btn"><i class="fas fa-forward-step"></i> Lagu Selanjutnya</button>
+        <!-- TRANSPORT ROW: Previous + Next -->
+        <div class="transport-row">
+            <button id="prev-button" class="transport-btn"><i class="fas fa-backward-step"></i> Sebelumnya</button>
+            <button id="next-button" class="transport-btn"><i class="fas fa-forward-step"></i> Selanjutnya</button>
         </div>
 
         <div class="playlist-section">
@@ -479,6 +503,7 @@
             const player = document.getElementById('audio-player');
             const titleSpan = document.getElementById('current-title');
             const nextBtn = document.getElementById('next-button');
+            const prevBtn = document.getElementById('prev-button');
             const searchInput = document.getElementById('search-input');
             const noResults = document.getElementById('no-results-msg');
             const disc = document.getElementById('discRotate');
@@ -493,13 +518,12 @@
                 groups[song.artist].push(song);
             });
 
-            // Urutkan artist secara alfabetis
             const sortedArtists = Object.keys(groups).sort((a, b) => a.localeCompare(b));
 
             // ============================================================
             //  Render playlist
             // ============================================================
-            let allSongItems = []; // [{ element, artist, title, src, groupKey }]
+            let allSongItems = [];
 
             function renderPlaylist() {
                 container.innerHTML = '';
@@ -511,7 +535,6 @@
                     groupDiv.className = 'playlist-group';
                     groupDiv.dataset.artist = artist;
 
-                    // --- header ---
                     const header = document.createElement('div');
                     header.className = 'artist-header';
                     header.innerHTML = `
@@ -521,7 +544,6 @@
                     `;
                     groupDiv.appendChild(header);
 
-                    // --- song items ---
                     songs.forEach(song => {
                         const item = document.createElement('div');
                         item.className = 'song-item';
@@ -532,7 +554,6 @@
                             <i class="fas fa-music"></i>
                             <span class="song-title">${song.title}</span>
                         `;
-                        // klik -> play
                         item.addEventListener('click', () => {
                             const idx = allSongItems.findIndex(s => s.element === item);
                             if (idx !== -1) playTrack(idx);
@@ -570,7 +591,7 @@
             player.addEventListener('ended', () => setDiscSpin(false));
 
             // ============================================================
-            //  Play / Next
+            //  Play / Next / Previous
             // ============================================================
             function playTrack(index) {
                 if (index < 0 || index >= allSongItems.length) {
@@ -584,7 +605,6 @@
                 }
 
                 const song = allSongItems[index];
-                // pastikan visible (reset search jika tersembunyi)
                 if (song.element.classList.contains('hidden')) {
                     resetSearch();
                 }
@@ -601,6 +621,13 @@
                     titleSpan.innerHTML = `${song.artist} — ${song.title} (klik play)`;
                     setDiscSpin(false);
                 });
+
+                // scroll ke lagu yang sedang diputar (jika perlu)
+                const containerRect = container.getBoundingClientRect();
+                const itemRect = song.element.getBoundingClientRect();
+                if (itemRect.bottom > containerRect.bottom || itemRect.top < containerRect.top) {
+                    song.element.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
             }
 
             function nextTrack() {
@@ -613,7 +640,19 @@
                 }
             }
 
+            function prevTrack() {
+                if (currentIdx === -1) {
+                    if (allSongItems.length) playTrack(allSongItems.length - 1);
+                } else {
+                    let prev = currentIdx - 1;
+                    if (prev < 0) prev = allSongItems.length - 1;
+                    playTrack(prev);
+                }
+            }
+
             nextBtn.addEventListener('click', nextTrack);
+            prevBtn.addEventListener('click', prevTrack);
+
             player.addEventListener('ended', () => {
                 if (currentIdx !== -1) nextTrack();
             });
@@ -625,7 +664,6 @@
                 const keyword = searchInput.value.trim().toLowerCase();
                 let anyVisible = false;
 
-                // loop semua group
                 const groupsEl = container.querySelectorAll('.playlist-group');
                 groupsEl.forEach(groupEl => {
                     const items = groupEl.querySelectorAll('.song-item');
@@ -644,7 +682,6 @@
                         }
                     });
 
-                    // sembunyikan seluruh group jika tidak ada item yang terlihat
                     if (groupHasVisible) {
                         groupEl.classList.remove('hidden-group');
                     } else {
@@ -663,7 +700,6 @@
                     searchInput.value = '';
                     filterSongs();
                 } else {
-                    // tampilkan semua
                     container.querySelectorAll('.song-item').forEach(el => el.classList.remove('hidden'));
                     container.querySelectorAll('.playlist-group').forEach(el => el.classList.remove('hidden-group'));
                     noResults.style.display = 'none';
