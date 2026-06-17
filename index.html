@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Music Player | Album View</title>
-    <!-- Google Fonts & Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
@@ -15,7 +14,7 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0a0a1a 0%, #1a1035 50%, #0d0d2b 100%);
+            background: linear-gradient(145deg, #0f0c1a 0%, #1a142b 30%, #0d1f2d 70%, #0a1520 100%);
             font-family: 'Inter', 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
@@ -33,8 +32,9 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 50%, rgba(100, 70, 200, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 50%, rgba(200, 70, 150, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 10% 20%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 217, 61, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -44,12 +44,12 @@
             z-index: 10;
             width: 100%;
             max-width: 500px;
-            background: rgba(18, 14, 35, 0.85);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(30px);
             border-radius: 2.8rem;
             padding: 2rem 1.8rem 1.8rem;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            border: 1px solid rgba(255, 255, 255, 0.04);
             transition: all 0.3s ease;
         }
 
@@ -66,7 +66,7 @@
         .player-header h1 {
             font-size: 1.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #f0ebff, #c5b5ff, #a88aff);
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b, #4ecdc4);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -76,34 +76,38 @@
             letter-spacing: -0.5px;
         }
         .player-header h1 i {
-            background: linear-gradient(135deg, #a88aff, #7f5fdd);
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             font-size: 1.6rem;
         }
         .badge {
-            background: rgba(120, 90, 200, 0.25);
+            background: rgba(255, 107, 107, 0.15);
             backdrop-filter: blur(4px);
             display: inline-block;
             padding: 0.3rem 1.2rem;
             border-radius: 40px;
             font-size: 0.7rem;
             font-weight: 500;
-            color: #cbc0ff;
+            color: #ffd93d;
             margin-top: 8px;
-            border: 1px solid rgba(180, 150, 255, 0.2);
+            border: 1px solid rgba(255, 217, 61, 0.15);
             letter-spacing: 0.5px;
+        }
+        .badge i {
+            color: #4ecdc4;
+            margin-right: 6px;
         }
 
         /* ===== NOW PLAYING ===== */
         .now-playing-area {
-            background: linear-gradient(135deg, rgba(40, 30, 80, 0.6), rgba(20, 15, 50, 0.8));
+            background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
             border-radius: 1.8rem;
             padding: 1rem 1.5rem;
             margin-bottom: 1.2rem;
-            border: 1px solid rgba(160, 130, 255, 0.15);
+            border: 1px solid rgba(255, 217, 61, 0.08);
             position: relative;
             overflow: hidden;
         }
@@ -114,7 +118,7 @@
             right: -20%;
             width: 200px;
             height: 200px;
-            background: radial-gradient(circle, rgba(120, 80, 255, 0.1), transparent 70%);
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.06), transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
@@ -123,7 +127,7 @@
             text-transform: uppercase;
             letter-spacing: 2.5px;
             font-weight: 700;
-            color: #9a8bdd;
+            color: #4ecdc4;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -132,7 +136,7 @@
         }
         .now-label i {
             font-size: 0.7rem;
-            color: #a88aff;
+            color: #ff6b6b;
         }
         .track-title {
             font-size: 1.1rem;
@@ -146,7 +150,7 @@
             position: relative;
         }
         .track-title span {
-            background: linear-gradient(120deg, #ffffff, #d9ceff);
+            background: linear-gradient(120deg, #ffffff, #ffd93d);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -155,19 +159,20 @@
             width: 44px;
             height: 44px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #3d2e7a, #1a1540);
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border: 1px solid rgba(160, 130, 255, 0.3);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 217, 61, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
             position: relative;
             overflow: hidden;
         }
         .album-art-mini i {
             font-size: 1.2rem;
-            color: #b09aff;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         .album-art-mini .vinyl-spin {
             animation: spin 3s linear infinite;
@@ -185,16 +190,16 @@
             height: 40px;
         }
         audio::-webkit-media-controls-panel {
-            background: #1e1a3a;
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 60px;
         }
         audio::-webkit-media-controls-play-button {
-            background-color: #7f5fdd;
+            background-color: #ff6b6b;
             border-radius: 50%;
         }
         audio::-webkit-media-controls-current-time-display,
         audio::-webkit-media-controls-time-remaining-display {
-            color: #cbc0ff;
+            color: #ffd93d;
         }
 
         /* ===== TRANSPORT ===== */
@@ -206,9 +211,9 @@
             flex-wrap: wrap;
         }
         .transport-btn {
-            background: linear-gradient(135deg, rgba(60, 45, 130, 0.8), rgba(30, 20, 70, 0.9));
-            border: none;
-            color: #e8e0ff;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 217, 61, 0.1);
+            color: #ffd93d;
             font-weight: 600;
             padding: 0.65rem 1.5rem;
             border-radius: 40px;
@@ -218,22 +223,25 @@
             align-items: center;
             gap: 10px;
             transition: all 0.25s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(160, 130, 255, 0.2);
-            flex: 0 1 auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(4px);
         }
         .transport-btn:hover {
-            background: linear-gradient(135deg, #5a45a8, #3a2a7a);
+            background: rgba(255, 107, 107, 0.15);
+            border-color: rgba(255, 107, 107, 0.3);
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 6px 20px rgba(100, 70, 200, 0.3);
-            border-color: rgba(180, 150, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.15);
+            color: #ffffff;
         }
         .transport-btn:active {
             transform: scale(0.96);
         }
         .transport-btn i {
             font-size: 0.85rem;
+            color: #4ecdc4;
+        }
+        .transport-btn:hover i {
+            color: #ff6b6b;
         }
 
         /* ===== SEARCH ===== */
@@ -246,13 +254,13 @@
             left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #9a8bdd;
+            color: #4ecdc4;
             font-size: 0.85rem;
         }
         #search-input {
             width: 100%;
-            background: rgba(25, 20, 55, 0.8);
-            border: 1px solid rgba(140, 110, 240, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(78, 205, 196, 0.15);
             border-radius: 60px;
             padding: 0.8rem 1rem 0.8rem 3rem;
             font-size: 0.85rem;
@@ -263,12 +271,12 @@
             backdrop-filter: blur(4px);
         }
         #search-input:focus {
-            border-color: #a88aff;
-            box-shadow: 0 0 0 3px rgba(150, 100, 255, 0.2), 0 0 20px rgba(120, 80, 255, 0.1);
-            background: rgba(30, 25, 65, 0.9);
+            border-color: #ffd93d;
+            box-shadow: 0 0 0 3px rgba(255, 217, 61, 0.08), 0 0 30px rgba(255, 107, 107, 0.05);
+            background: rgba(255, 255, 255, 0.06);
         }
         #search-input::placeholder {
-            color: #7a6fa8;
+            color: rgba(255, 255, 255, 0.2);
         }
 
         /* ===== PLAYLIST ===== */
@@ -281,12 +289,12 @@
             gap: 10px;
             font-size: 0.8rem;
             font-weight: 600;
-            color: #b8abf0;
+            color: #4ecdc4;
             margin-bottom: 1rem;
             padding-left: 4px;
         }
         .playlist-header i {
-            color: #a88aff;
+            color: #ff6b6b;
             font-size: 0.9rem;
         }
 
@@ -300,22 +308,22 @@
             width: 3px;
         }
         .playlist-list::-webkit-scrollbar-track {
-            background: rgba(40, 30, 80, 0.3);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
         }
         .playlist-list::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #7f66cc, #5a3fa8);
+            background: linear-gradient(180deg, #ff6b6b, #ffd93d);
             border-radius: 10px;
         }
 
         /* ===== ALBUM CARDS ===== */
         .album-card {
-            background: rgba(28, 22, 60, 0.5);
+            background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(8px);
             border-radius: 1.5rem;
             padding: 1.2rem 1.2rem 1rem;
             margin-bottom: 1.2rem;
-            border: 1px solid rgba(160, 130, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -327,13 +335,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(120, 80, 255, 0.03), transparent 60%);
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.03), transparent 60%);
             pointer-events: none;
             border-radius: 1.5rem;
         }
         .album-card:hover {
-            background: rgba(35, 28, 72, 0.6);
-            border-color: rgba(160, 130, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 217, 61, 0.08);
             transform: translateX(4px);
         }
         .album-card.hidden-group {
@@ -351,24 +359,23 @@
             width: 52px;
             height: 52px;
             border-radius: 14px;
-            background: linear-gradient(135deg, #3d2e7a, #1a1540);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            border: 1px solid rgba(160, 130, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             position: relative;
         }
         .album-cover i {
             font-size: 1.4rem;
-            color: #b09aff;
+            color: rgba(255, 255, 255, 0.8);
         }
         .album-cover .cover-badge {
             position: absolute;
             bottom: -4px;
             right: -4px;
-            background: rgba(120, 80, 255, 0.3);
+            background: rgba(255, 107, 107, 0.2);
             border-radius: 50%;
             width: 18px;
             height: 18px;
@@ -376,7 +383,7 @@
             align-items: center;
             justify-content: center;
             font-size: 0.5rem;
-            border: 1px solid rgba(160, 130, 255, 0.3);
+            border: 1px solid rgba(255, 217, 61, 0.2);
         }
         .album-info {
             flex: 1;
@@ -389,7 +396,7 @@
         }
         .album-info .song-count {
             font-size: 0.7rem;
-            color: #9a8bdd;
+            color: rgba(255, 255, 255, 0.3);
             font-weight: 400;
             display: block;
             margin-top: 2px;
@@ -405,7 +412,7 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #d5ccf5;
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 400;
             font-size: 0.8rem;
             position: relative;
@@ -415,7 +422,7 @@
             width: 20px;
             text-align: center;
             font-size: 0.7rem;
-            color: #7a6fa8;
+            color: rgba(255, 255, 255, 0.15);
             flex-shrink: 0;
             transition: all 0.2s;
         }
@@ -428,26 +435,28 @@
         }
         .song-item .song-index {
             font-size: 0.6rem;
-            color: #6a5f99;
+            color: rgba(255, 255, 255, 0.15);
             font-weight: 400;
             min-width: 18px;
             text-align: right;
         }
         .song-item:hover {
-            background: rgba(80, 60, 170, 0.3);
-            border-color: rgba(160, 130, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 217, 61, 0.05);
             transform: translateX(4px);
+            color: rgba(255, 255, 255, 0.8);
         }
         .song-item.playing {
-            background: linear-gradient(135deg, rgba(100, 70, 200, 0.4), rgba(60, 40, 140, 0.3));
-            border-color: rgba(200, 170, 255, 0.3);
-            box-shadow: 0 0 20px rgba(120, 80, 255, 0.1);
+            background: rgba(255, 107, 107, 0.08);
+            border-color: rgba(255, 107, 107, 0.15);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.03);
+            color: #ffffff;
         }
         .song-item.playing i {
-            color: #d4bfff;
+            color: #ff6b6b;
         }
         .song-item.playing .song-title {
-            color: #ffffff;
+            color: #ffd93d;
         }
         .song-item.playing::before {
             content: '';
@@ -456,7 +465,7 @@
             top: 10%;
             height: 80%;
             width: 3px;
-            background: linear-gradient(180deg, #a88aff, #7f5fdd);
+            background: linear-gradient(180deg, #ffd93d, #ff6b6b);
             border-radius: 4px;
         }
         .song-item.hidden {
@@ -464,13 +473,13 @@
         }
 
         .no-results {
-            background: rgba(30, 25, 70, 0.6);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 1.5rem;
             padding: 1.5rem;
             text-align: center;
-            color: #b8abf0;
+            color: rgba(255, 255, 255, 0.3);
             font-size: 0.8rem;
-            border: 1px dashed rgba(160, 130, 255, 0.2);
+            border: 1px dashed rgba(255, 217, 61, 0.08);
             display: none;
             margin-top: 0.5rem;
             backdrop-filter: blur(4px);
@@ -479,20 +488,20 @@
             font-size: 1.2rem;
             display: block;
             margin-bottom: 8px;
-            color: #7a6fa8;
+            color: rgba(255, 255, 255, 0.1);
         }
 
         footer {
             font-size: 0.6rem;
             text-align: center;
             margin-top: 1.5rem;
-            color: #5a4f8a;
+            color: rgba(255, 255, 255, 0.1);
             letter-spacing: 0.5px;
-            border-top: 1px solid rgba(160, 130, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
             padding-top: 1rem;
         }
         footer i {
-            color: #7a6fa8;
+            color: rgba(78, 205, 196, 0.3);
             margin: 0 4px;
         }
 
@@ -547,13 +556,11 @@
 </head>
 <body>
     <div class="player-card">
-        <!-- HEADER -->
         <div class="player-header">
             <h1><i class="fas fa-compact-disc"></i> Music Player</h1>
-            <div class="badge"><i class="fas fa-headphones-simple"></i> koleksi album · santai</div>
+            <div class="badge"><i class="fas fa-headphones-simple"></i> album view · colorful</div>
         </div>
 
-        <!-- NOW PLAYING -->
         <div class="now-playing-area">
             <div class="now-label"><i class="fas fa-circle-play"></i> sedang diputar</div>
             <div class="track-title">
@@ -564,16 +571,13 @@
             </div>
         </div>
 
-        <!-- AUDIO -->
         <audio id="audio-player" controls preload="metadata"></audio>
 
-        <!-- TRANSPORT -->
         <div class="transport-row">
             <button id="prev-button" class="transport-btn"><i class="fas fa-backward-step"></i> Sebelumnya</button>
             <button id="next-button" class="transport-btn"><i class="fas fa-forward-step"></i> Selanjutnya</button>
         </div>
 
-        <!-- PLAYLIST -->
         <div class="playlist-section">
             <div class="playlist-header"><i class="fas fa-album"></i> Album &amp; Lagu</div>
             <div class="search-container">
@@ -583,12 +587,11 @@
             <div class="playlist-list" id="playlist-container"></div>
             <div id="no-results-msg" class="no-results"><i class="fas fa-compact-disc"></i> Lagu tidak ditemukan, coba kata kunci lain</div>
         </div>
-        <footer><i class="fas fa-head-side-headphones"></i> album view · hi-fi player</footer>
+        <footer><i class="fas fa-head-side-headphones"></i> gradient vibes · hi-fi player</footer>
     </div>
 
     <script>
         (function() {
-            // ===== DATA LAGU =====
             const songData = [{
                 artist: "Ariana Grande",
                 title: "Position",
@@ -655,7 +658,6 @@
                 src: "assets/Astrid - Terpukau.mp3"
             }];
 
-            // ===== DOM REFS =====
             const player = document.getElementById('audio-player');
             const titleSpan = document.getElementById('current-title');
             const nextBtn = document.getElementById('next-button');
@@ -665,7 +667,6 @@
             const discIcon = document.getElementById('discIcon');
             const container = document.getElementById('playlist-container');
 
-            // ===== GROUP DATA =====
             const groups = {};
             songData.forEach(song => {
                 if (!groups[song.artist]) groups[song.artist] = [];
@@ -673,15 +674,16 @@
             });
             const sortedArtists = Object.keys(groups).sort((a, b) => a.localeCompare(b));
 
-            // ===== RENDER PLAYLIST (ALBUM CARDS) =====
             let allSongItems = [];
             const artistColors = [
-                'linear-gradient(135deg, #2d1b69, #1a0f40)',
-                'linear-gradient(135deg, #1a3a5c, #0f2a45)',
-                'linear-gradient(135deg, #4a1a3a, #2a1025)',
-                'linear-gradient(135deg, #2a4a3a, #153025)',
-                'linear-gradient(135deg, #3a2a5a, #1f1540)',
-                'linear-gradient(135deg, #5a2a2a, #3a1515)',
+                'linear-gradient(135deg, #ff6b6b, #ee5a24)',
+                'linear-gradient(135deg, #4ecdc4, #44bd9e)',
+                'linear-gradient(135deg, #ffd93d, #f9a825)',
+                'linear-gradient(135deg, #6c5ce7, #a29bfe)',
+                'linear-gradient(135deg, #fd79a8, #e84393)',
+                'linear-gradient(135deg, #00b894, #00cec9)',
+                'linear-gradient(135deg, #fdcb6e, #f39c12)',
+                'linear-gradient(135deg, #e17055, #d63031)',
             ];
 
             function renderPlaylist() {
@@ -697,7 +699,6 @@
                     albumCard.className = 'album-card';
                     albumCard.dataset.artist = artist;
 
-                    // Album Header
                     const header = document.createElement('div');
                     header.className = 'album-header';
                     header.innerHTML = `
@@ -712,7 +713,6 @@
                     `;
                     albumCard.appendChild(header);
 
-                    // Song items
                     songs.forEach((song, songIdx) => {
                         const item = document.createElement('div');
                         item.className = 'song-item';
@@ -745,7 +745,6 @@
 
             renderPlaylist();
 
-            // ===== PLAYER STATE =====
             let currentIdx = -1;
             let activeItem = null;
 
@@ -758,7 +757,6 @@
             player.addEventListener('pause', () => setDiscSpin(false));
             player.addEventListener('ended', () => setDiscSpin(false));
 
-            // ===== PLAY FUNCTIONS =====
             function playTrack(index) {
                 if (index < 0 || index >= allSongItems.length) {
                     titleSpan.innerHTML = "🏁 akhir playlist · pilih lagu";
@@ -788,7 +786,6 @@
                     setDiscSpin(false);
                 });
 
-                // scroll
                 const containerRect = container.getBoundingClientRect();
                 const itemRect = song.element.getBoundingClientRect();
                 if (itemRect.bottom > containerRect.bottom || itemRect.top < containerRect.top) {
@@ -822,7 +819,6 @@
                 if (currentIdx !== -1) nextTrack();
             });
 
-            // ===== SEARCH / FILTER =====
             function filterSongs() {
                 const keyword = searchInput.value.trim().toLowerCase();
                 let anyVisible = false;
@@ -874,7 +870,6 @@
                 if (e.key === 'Escape') resetSearch();
             });
 
-            // ===== ERROR HANDLING =====
             player.addEventListener('error', () => {
                 let errMsg = "Gagal memuat file. Pastikan folder 'assets' berisi semua MP3.";
                 titleSpan.innerHTML = `⚠️ ${errMsg}`;
@@ -884,7 +879,6 @@
                 setDiscSpin(false);
             });
 
-            // ===== INIT =====
             resetSearch();
             player.src = "";
         })();
