@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>Music Player | Grouped by Artist</title>
+    <title>Music Player | Album View</title>
     <!-- Google Fonts & Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
@@ -15,7 +15,7 @@
         }
 
         body {
-            background: linear-gradient(145deg, #10101e 0%, #1a1a2e 100%);
+            background: linear-gradient(145deg, #0a0a1a 0%, #1a1035 50%, #0d0d2b 100%);
             font-family: 'Inter', 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
@@ -32,10 +32,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image:
-                linear-gradient(rgba(80, 70, 150, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(80, 70, 150, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(100, 70, 200, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(200, 70, 150, 0.08) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -44,29 +43,30 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 480px;
-            background: rgba(20, 20, 35, 0.75);
-            backdrop-filter: blur(20px);
-            border-radius: 2.5rem;
-            padding: 1.8rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-            transition: transform 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            background: rgba(18, 14, 35, 0.85);
+            backdrop-filter: blur(30px);
+            border-radius: 2.8rem;
+            padding: 2rem 1.8rem 1.8rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
         }
 
         .player-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.7);
         }
 
+        /* ===== HEADER ===== */
         .player-header {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.8rem;
         }
         .player-header h1 {
-            font-size: 1.9rem;
+            font-size: 1.8rem;
             font-weight: 800;
-            background: linear-gradient(120deg, #f0f0ff, #c0b5ff, #a090ff);
+            background: linear-gradient(135deg, #f0ebff, #c5b5ff, #a88aff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
@@ -76,51 +76,74 @@
             letter-spacing: -0.5px;
         }
         .player-header h1 i {
-            background: none;
-            color: #b9a9ff;
-            font-size: 1.8rem;
+            background: linear-gradient(135deg, #a88aff, #7f5fdd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 1.6rem;
         }
         .badge {
-            background: rgba(100, 90, 150, 0.4);
+            background: rgba(120, 90, 200, 0.25);
             backdrop-filter: blur(4px);
             display: inline-block;
-            padding: 0.25rem 1rem;
+            padding: 0.3rem 1.2rem;
             border-radius: 40px;
             font-size: 0.7rem;
             font-weight: 500;
-            color: #cfc9ff;
+            color: #cbc0ff;
             margin-top: 8px;
-            border: 1px solid rgba(200, 180, 255, 0.3);
+            border: 1px solid rgba(180, 150, 255, 0.2);
+            letter-spacing: 0.5px;
         }
 
+        /* ===== NOW PLAYING ===== */
         .now-playing-area {
-            background: rgba(15, 15, 30, 0.6);
+            background: linear-gradient(135deg, rgba(40, 30, 80, 0.6), rgba(20, 15, 50, 0.8));
             backdrop-filter: blur(12px);
             border-radius: 1.8rem;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid rgba(160, 130, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .now-playing-area::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(120, 80, 255, 0.1), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
         }
         .now-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-            color: #bbb0ff;
+            letter-spacing: 2.5px;
+            font-weight: 700;
+            color: #9a8bdd;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .now-label i {
+            font-size: 0.7rem;
+            color: #a88aff;
         }
         .track-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #f0ebff;
             word-break: break-word;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             flex-wrap: wrap;
+            position: relative;
         }
         .track-title span {
             background: linear-gradient(120deg, #ffffff, #d9ceff);
@@ -128,79 +151,92 @@
             -webkit-background-clip: text;
             color: transparent;
         }
-        .disc-icon {
-            width: 36px;
-            height: 36px;
-            background: radial-gradient(circle at 30% 30%, #2a235a, #111030);
-            border-radius: 50%;
-            display: inline-flex;
+        .album-art-mini {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3d2e7a, #1a1540);
+            display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 0 2px #7f66d4, 0 0 0 4px rgba(0, 0, 0, 0.2);
             flex-shrink: 0;
+            border: 1px solid rgba(160, 130, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
-        .rotate {
-            animation: spin 4s linear infinite;
+        .album-art-mini i {
+            font-size: 1.2rem;
+            color: #b09aff;
+        }
+        .album-art-mini .vinyl-spin {
+            animation: spin 3s linear infinite;
         }
         @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
+        /* ===== AUDIO ===== */
         audio {
             width: 100%;
-            margin: 0.5rem 0 0.8rem;
+            margin: 0.5rem 0 0.3rem;
             border-radius: 60px;
+            height: 40px;
         }
         audio::-webkit-media-controls-panel {
-            background: #262240;
+            background: #1e1a3a;
             border-radius: 60px;
         }
         audio::-webkit-media-controls-play-button {
-            background-color: #8f76ff;
+            background-color: #7f5fdd;
             border-radius: 50%;
         }
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: #cbc0ff;
+        }
 
-        /* ===== TRANSPORT BUTTONS ===== */
+        /* ===== TRANSPORT ===== */
         .transport-row {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin: 8px 0 12px;
+            gap: 10px;
+            margin: 6px 0 14px;
             flex-wrap: wrap;
         }
         .transport-btn {
-            background: linear-gradient(95deg, #3d2e74, #221d4a);
+            background: linear-gradient(135deg, rgba(60, 45, 130, 0.8), rgba(30, 20, 70, 0.9));
             border: none;
-            color: white;
+            color: #e8e0ff;
             font-weight: 600;
-            padding: 0.7rem 1.4rem;
+            padding: 0.65rem 1.5rem;
             border-radius: 40px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.2s;
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(160, 130, 255, 0.5);
+            transition: all 0.25s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(160, 130, 255, 0.2);
             flex: 0 1 auto;
+            backdrop-filter: blur(4px);
         }
         .transport-btn:hover {
-            background: linear-gradient(95deg, #5a45a0, #3a2a6e);
-            transform: scale(1.02);
+            background: linear-gradient(135deg, #5a45a8, #3a2a7a);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(100, 70, 200, 0.3);
+            border-color: rgba(180, 150, 255, 0.4);
         }
         .transport-btn:active {
-            transform: scale(0.97);
+            transform: scale(0.96);
         }
         .transport-btn i {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
+        /* ===== SEARCH ===== */
         .search-container {
             margin: 1rem 0 1.2rem;
             position: relative;
@@ -210,231 +246,349 @@
             left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #b3a6ff;
-            font-size: 0.9rem;
+            color: #9a8bdd;
+            font-size: 0.85rem;
         }
         #search-input {
             width: 100%;
-            background: rgba(25, 22, 50, 0.8);
-            border: 1px solid rgba(140, 110, 240, 0.5);
+            background: rgba(25, 20, 55, 0.8);
+            border: 1px solid rgba(140, 110, 240, 0.3);
             border-radius: 60px;
-            padding: 0.8rem 1rem 0.8rem 2.8rem;
+            padding: 0.8rem 1rem 0.8rem 3rem;
             font-size: 0.85rem;
             color: #f0ebff;
             font-weight: 500;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
         }
         #search-input:focus {
             border-color: #a88aff;
-            box-shadow: 0 0 0 3px rgba(150, 100, 255, 0.3);
+            box-shadow: 0 0 0 3px rgba(150, 100, 255, 0.2), 0 0 20px rgba(120, 80, 255, 0.1);
+            background: rgba(30, 25, 65, 0.9);
         }
         #search-input::placeholder {
-            color: #938ac7;
+            color: #7a6fa8;
         }
 
+        /* ===== PLAYLIST ===== */
         .playlist-section {
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
         }
         .playlist-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: #cdc2ff;
+            color: #b8abf0;
             margin-bottom: 1rem;
-            border-left: 3px solid #a67cff;
-            padding-left: 12px;
+            padding-left: 4px;
+        }
+        .playlist-header i {
+            color: #a88aff;
+            font-size: 0.9rem;
         }
 
         .playlist-list {
-            max-height: 380px;
+            max-height: 400px;
             overflow-y: auto;
-            padding-right: 5px;
+            padding-right: 4px;
             scrollbar-width: thin;
         }
         .playlist-list::-webkit-scrollbar {
-            width: 4px;
+            width: 3px;
         }
         .playlist-list::-webkit-scrollbar-track {
-            background: #2a2355;
+            background: rgba(40, 30, 80, 0.3);
             border-radius: 10px;
         }
         .playlist-list::-webkit-scrollbar-thumb {
-            background: #7f66cc;
+            background: linear-gradient(180deg, #7f66cc, #5a3fa8);
             border-radius: 10px;
         }
 
-        /* ===== GROUP STYLES ===== */
-        .playlist-group {
-            margin-bottom: 1rem;
+        /* ===== ALBUM CARDS ===== */
+        .album-card {
+            background: rgba(28, 22, 60, 0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.2rem 1rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid rgba(160, 130, 255, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        .playlist-group.hidden-group {
+        .album-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(120, 80, 255, 0.03), transparent 60%);
+            pointer-events: none;
+            border-radius: 1.5rem;
+        }
+        .album-card:hover {
+            background: rgba(35, 28, 72, 0.6);
+            border-color: rgba(160, 130, 255, 0.2);
+            transform: translateX(4px);
+        }
+        .album-card.hidden-group {
             display: none;
         }
 
-        .artist-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0.4rem 0.8rem 0.4rem 0;
-            margin-bottom: 6px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #e4dcff;
-            border-bottom: 1px solid rgba(140, 110, 240, 0.25);
-            letter-spacing: 0.3px;
-            cursor: default;
-            user-select: none;
-        }
-        .artist-header i {
-            color: #b79eff;
-            font-size: 0.9rem;
-            width: 22px;
-            text-align: center;
-        }
-        .artist-header .artist-name {
-            flex: 1;
-        }
-        .artist-header .song-count {
-            font-size: 0.6rem;
-            font-weight: 400;
-            color: #9188c7;
-            background: rgba(80, 65, 155, 0.4);
-            padding: 0.15rem 0.7rem;
-            border-radius: 40px;
-            border: 1px solid rgba(160, 130, 255, 0.2);
-        }
-
-        .song-item {
+        .album-header {
             display: flex;
             align-items: center;
             gap: 14px;
-            padding: 0.55rem 1rem 0.55rem 2.2rem;
-            background: rgba(28, 25, 55, 0.4);
-            backdrop-filter: blur(4px);
-            margin-bottom: 6px;
-            border-radius: 60px;
+            margin-bottom: 10px;
+            cursor: default;
+        }
+        .album-cover {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3d2e7a, #1a1540);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(160, 130, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .album-cover i {
+            font-size: 1.4rem;
+            color: #b09aff;
+        }
+        .album-cover .cover-badge {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            background: rgba(120, 80, 255, 0.3);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5rem;
+            border: 1px solid rgba(160, 130, 255, 0.3);
+        }
+        .album-info {
+            flex: 1;
+        }
+        .album-info .artist-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #f0ebff;
+            letter-spacing: -0.3px;
+        }
+        .album-info .song-count {
+            font-size: 0.7rem;
+            color: #9a8bdd;
+            font-weight: 400;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ===== SONG ITEMS ===== */
+        .song-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.5rem 1rem 0.5rem 1.2rem;
+            margin: 4px 0;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(160, 130, 255, 0.12);
-            color: #e6deff;
-            font-weight: 500;
+            transition: all 0.2s ease;
+            color: #d5ccf5;
+            font-weight: 400;
             font-size: 0.8rem;
+            position: relative;
+            border: 1px solid transparent;
         }
         .song-item i {
-            width: 24px;
+            width: 20px;
             text-align: center;
-            font-size: 0.85rem;
-            color: #cfbdff;
+            font-size: 0.7rem;
+            color: #7a6fa8;
             flex-shrink: 0;
+            transition: all 0.2s;
         }
         .song-item .song-title {
             flex: 1;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-weight: 500;
+        }
+        .song-item .song-index {
+            font-size: 0.6rem;
+            color: #6a5f99;
+            font-weight: 400;
+            min-width: 18px;
+            text-align: right;
         }
         .song-item:hover {
-            background: rgba(80, 65, 155, 0.85);
-            transform: translateX(5px);
-            border-color: #bc95ff;
+            background: rgba(80, 60, 170, 0.3);
+            border-color: rgba(160, 130, 255, 0.15);
+            transform: translateX(4px);
         }
         .song-item.playing {
-            background: linear-gradient(95deg, #4a3790, #2c2066);
-            border-left: 3px solid #ffc285;
-            box-shadow: 0 0 10px #a47eff;
+            background: linear-gradient(135deg, rgba(100, 70, 200, 0.4), rgba(60, 40, 140, 0.3));
+            border-color: rgba(200, 170, 255, 0.3);
+            box-shadow: 0 0 20px rgba(120, 80, 255, 0.1);
+        }
+        .song-item.playing i {
+            color: #d4bfff;
+        }
+        .song-item.playing .song-title {
+            color: #ffffff;
+        }
+        .song-item.playing::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10%;
+            height: 80%;
+            width: 3px;
+            background: linear-gradient(180deg, #a88aff, #7f5fdd);
+            border-radius: 4px;
         }
         .song-item.hidden {
             display: none;
         }
 
         .no-results {
-            background: rgba(30, 25, 70, 0.7);
-            border-radius: 50px;
-            padding: 1.2rem;
+            background: rgba(30, 25, 70, 0.6);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
             text-align: center;
-            color: #cbc0ff;
+            color: #b8abf0;
             font-size: 0.8rem;
-            border: 1px dashed #b27eff;
+            border: 1px dashed rgba(160, 130, 255, 0.2);
             display: none;
             margin-top: 0.5rem;
+            backdrop-filter: blur(4px);
+        }
+        .no-results i {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 8px;
+            color: #7a6fa8;
         }
 
         footer {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-align: center;
             margin-top: 1.5rem;
-            color: #756baa;
+            color: #5a4f8a;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(160, 130, 255, 0.05);
+            padding-top: 1rem;
+        }
+        footer i {
+            color: #7a6fa8;
+            margin: 0 4px;
         }
 
-        /* responsive */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 420px) {
             .player-card {
                 padding: 1.2rem;
+                border-radius: 2rem;
             }
-            .song-item {
-                padding: 0.5rem 0.8rem 0.5rem 1.6rem;
-                font-size: 0.75rem;
+            .album-card {
+                padding: 0.8rem 0.8rem 0.6rem;
+                border-radius: 1.2rem;
             }
-            .artist-header {
-                font-size: 0.8rem;
+            .album-cover {
+                width: 42px;
+                height: 42px;
             }
-            .track-title {
+            .album-cover i {
                 font-size: 1rem;
             }
+            .album-info .artist-name {
+                font-size: 0.85rem;
+            }
+            .song-item {
+                padding: 0.4rem 0.6rem 0.4rem 0.8rem;
+                font-size: 0.7rem;
+                border-radius: 8px;
+            }
+            .track-title {
+                font-size: 0.95rem;
+            }
             .transport-btn {
-                padding: 0.6rem 1rem;
-                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.7rem;
                 gap: 6px;
             }
             .transport-row {
-                gap: 8px;
+                gap: 6px;
+            }
+            .now-playing-area {
+                padding: 0.8rem 1rem;
+            }
+            .album-art-mini {
+                width: 36px;
+                height: 36px;
+            }
+            .playlist-list {
+                max-height: 320px;
             }
         }
     </style>
 </head>
 <body>
     <div class="player-card">
+        <!-- HEADER -->
         <div class="player-header">
-            <h1><i class="fas fa-headphones"></i> Music Player</h1>
-            <div class="badge"><i class="fas fa-waveform"></i> santai sedih pagi</div>
+            <h1><i class="fas fa-compact-disc"></i> Music Player</h1>
+            <div class="badge"><i class="fas fa-headphones-simple"></i> koleksi album · santai</div>
         </div>
 
+        <!-- NOW PLAYING -->
         <div class="now-playing-area">
-            <div class="now-label"><i class="fas fa-circle-play"></i> NOW PLAYING</div>
+            <div class="now-label"><i class="fas fa-circle-play"></i> sedang diputar</div>
             <div class="track-title">
-                <div class="disc-icon" id="discRotate"><i class="fas fa-record-vinyl"></i></div>
+                <div class="album-art-mini">
+                    <i class="fas fa-record-vinyl vinyl-spin" id="discIcon"></i>
+                </div>
                 <span id="current-title">✨ pilih lagu favoritmu</span>
             </div>
         </div>
 
+        <!-- AUDIO -->
         <audio id="audio-player" controls preload="metadata"></audio>
 
-        <!-- TRANSPORT ROW: Previous + Next -->
+        <!-- TRANSPORT -->
         <div class="transport-row">
             <button id="prev-button" class="transport-btn"><i class="fas fa-backward-step"></i> Sebelumnya</button>
             <button id="next-button" class="transport-btn"><i class="fas fa-forward-step"></i> Selanjutnya</button>
         </div>
 
+        <!-- PLAYLIST -->
         <div class="playlist-section">
-            <div class="playlist-header"><i class="fas fa-list-music"></i> Daftar Lagu</div>
+            <div class="playlist-header"><i class="fas fa-album"></i> Album &amp; Lagu</div>
             <div class="search-container">
                 <i class="fas fa-search"></i>
                 <input type="text" id="search-input" placeholder="Cari judul atau artis..." autocomplete="off" />
             </div>
             <div class="playlist-list" id="playlist-container"></div>
-            <div id="no-results-msg" class="no-results"><i class="fas fa-binoculars"></i> Lagu tidak ditemukan, coba kata kunci lain</div>
+            <div id="no-results-msg" class="no-results"><i class="fas fa-compact-disc"></i> Lagu tidak ditemukan, coba kata kunci lain</div>
         </div>
-        <footer><i class="fas fa-head-side-headphones"></i> hi-fi player · grouped by artist</footer>
+        <footer><i class="fas fa-head-side-headphones"></i> album view · hi-fi player</footer>
     </div>
 
     <script>
         (function() {
-            // ============================================================
-            //  DATA LAGU (artist, title, src)
-            // ============================================================
+            // ===== DATA LAGU =====
             const songData = [{
                 artist: "Ariana Grande",
                 title: "Position",
@@ -499,56 +653,67 @@
                 artist: "Astrid",
                 title: "Astrid - Terpukau",
                 src: "assets/Astrid - Terpukau.mp3"
-             }];
+            }];
 
-            // ============================================================
-            //  DOM refs
-            // ============================================================
+            // ===== DOM REFS =====
             const player = document.getElementById('audio-player');
             const titleSpan = document.getElementById('current-title');
             const nextBtn = document.getElementById('next-button');
             const prevBtn = document.getElementById('prev-button');
             const searchInput = document.getElementById('search-input');
             const noResults = document.getElementById('no-results-msg');
-            const disc = document.getElementById('discRotate');
+            const discIcon = document.getElementById('discIcon');
             const container = document.getElementById('playlist-container');
 
-            // ============================================================
-            //  Group data by artist
-            // ============================================================
+            // ===== GROUP DATA =====
             const groups = {};
             songData.forEach(song => {
                 if (!groups[song.artist]) groups[song.artist] = [];
                 groups[song.artist].push(song);
             });
-
             const sortedArtists = Object.keys(groups).sort((a, b) => a.localeCompare(b));
 
-            // ============================================================
-            //  Render playlist
-            // ============================================================
+            // ===== RENDER PLAYLIST (ALBUM CARDS) =====
             let allSongItems = [];
+            const artistColors = [
+                'linear-gradient(135deg, #2d1b69, #1a0f40)',
+                'linear-gradient(135deg, #1a3a5c, #0f2a45)',
+                'linear-gradient(135deg, #4a1a3a, #2a1025)',
+                'linear-gradient(135deg, #2a4a3a, #153025)',
+                'linear-gradient(135deg, #3a2a5a, #1f1540)',
+                'linear-gradient(135deg, #5a2a2a, #3a1515)',
+            ];
 
             function renderPlaylist() {
                 container.innerHTML = '';
                 allSongItems = [];
 
-                sortedArtists.forEach(artist => {
+                sortedArtists.forEach((artist, idx) => {
                     const songs = groups[artist];
-                    const groupDiv = document.createElement('div');
-                    groupDiv.className = 'playlist-group';
-                    groupDiv.dataset.artist = artist;
+                    const colorIdx = idx % artistColors.length;
+                    const coverColor = artistColors[colorIdx];
 
+                    const albumCard = document.createElement('div');
+                    albumCard.className = 'album-card';
+                    albumCard.dataset.artist = artist;
+
+                    // Album Header
                     const header = document.createElement('div');
-                    header.className = 'artist-header';
+                    header.className = 'album-header';
                     header.innerHTML = `
-                        <i class="fas fa-user"></i>
-                        <span class="artist-name">${artist}</span>
-                        <span class="song-count">${songs.length} lagu</span>
+                        <div class="album-cover" style="background: ${coverColor};">
+                            <i class="fas fa-compact-disc"></i>
+                            <span class="cover-badge"><i class="fas fa-music" style="font-size:0.4rem;"></i></span>
+                        </div>
+                        <div class="album-info">
+                            <span class="artist-name">${artist}</span>
+                            <span class="song-count">${songs.length} lagu</span>
+                        </div>
                     `;
-                    groupDiv.appendChild(header);
+                    albumCard.appendChild(header);
 
-                    songs.forEach(song => {
+                    // Song items
+                    songs.forEach((song, songIdx) => {
                         const item = document.createElement('div');
                         item.className = 'song-item';
                         item.dataset.artist = song.artist;
@@ -557,12 +722,13 @@
                         item.innerHTML = `
                             <i class="fas fa-music"></i>
                             <span class="song-title">${song.title}</span>
+                            <span class="song-index">${String(songIdx + 1).padStart(2, '0')}</span>
                         `;
                         item.addEventListener('click', () => {
                             const idx = allSongItems.findIndex(s => s.element === item);
                             if (idx !== -1) playTrack(idx);
                         });
-                        groupDiv.appendChild(item);
+                        albumCard.appendChild(item);
 
                         allSongItems.push({
                             element: item,
@@ -573,33 +739,29 @@
                         });
                     });
 
-                    container.appendChild(groupDiv);
+                    container.appendChild(albumCard);
                 });
             }
 
             renderPlaylist();
 
-            // ============================================================
-            //  Player state
-            // ============================================================
+            // ===== PLAYER STATE =====
             let currentIdx = -1;
             let activeItem = null;
 
             function setDiscSpin(playing) {
-                if (playing) disc.classList.add('rotate');
-                else disc.classList.remove('rotate');
+                if (playing) discIcon.classList.add('vinyl-spin');
+                else discIcon.classList.remove('vinyl-spin');
             }
 
             player.addEventListener('play', () => setDiscSpin(true));
             player.addEventListener('pause', () => setDiscSpin(false));
             player.addEventListener('ended', () => setDiscSpin(false));
 
-            // ============================================================
-            //  Play / Next / Previous
-            // ============================================================
+            // ===== PLAY FUNCTIONS =====
             function playTrack(index) {
                 if (index < 0 || index >= allSongItems.length) {
-                    titleSpan.innerHTML = "🏁 Akhir playlist | pilih lagu";
+                    titleSpan.innerHTML = "🏁 akhir playlist · pilih lagu";
                     player.src = "";
                     if (activeItem) activeItem.classList.remove('playing');
                     activeItem = null;
@@ -626,7 +788,7 @@
                     setDiscSpin(false);
                 });
 
-                // scroll ke lagu yang sedang diputar (jika perlu)
+                // scroll
                 const containerRect = container.getBoundingClientRect();
                 const itemRect = song.element.getBoundingClientRect();
                 if (itemRect.bottom > containerRect.bottom || itemRect.top < containerRect.top) {
@@ -656,21 +818,18 @@
 
             nextBtn.addEventListener('click', nextTrack);
             prevBtn.addEventListener('click', prevTrack);
-
             player.addEventListener('ended', () => {
                 if (currentIdx !== -1) nextTrack();
             });
 
-            // ============================================================
-            //  Search / Filter
-            // ============================================================
+            // ===== SEARCH / FILTER =====
             function filterSongs() {
                 const keyword = searchInput.value.trim().toLowerCase();
                 let anyVisible = false;
 
-                const groupsEl = container.querySelectorAll('.playlist-group');
-                groupsEl.forEach(groupEl => {
-                    const items = groupEl.querySelectorAll('.song-item');
+                const albumCards = container.querySelectorAll('.album-card');
+                albumCards.forEach(card => {
+                    const items = card.querySelectorAll('.song-item');
                     let groupHasVisible = false;
 
                     items.forEach(item => {
@@ -687,9 +846,9 @@
                     });
 
                     if (groupHasVisible) {
-                        groupEl.classList.remove('hidden-group');
+                        card.classList.remove('hidden-group');
                     } else {
-                        groupEl.classList.add('hidden-group');
+                        card.classList.add('hidden-group');
                     }
                 });
 
@@ -705,7 +864,7 @@
                     filterSongs();
                 } else {
                     container.querySelectorAll('.song-item').forEach(el => el.classList.remove('hidden'));
-                    container.querySelectorAll('.playlist-group').forEach(el => el.classList.remove('hidden-group'));
+                    container.querySelectorAll('.album-card').forEach(el => el.classList.remove('hidden-group'));
                     noResults.style.display = 'none';
                 }
             }
@@ -715,9 +874,7 @@
                 if (e.key === 'Escape') resetSearch();
             });
 
-            // ============================================================
-            //  Error handling
-            // ============================================================
+            // ===== ERROR HANDLING =====
             player.addEventListener('error', () => {
                 let errMsg = "Gagal memuat file. Pastikan folder 'assets' berisi semua MP3.";
                 titleSpan.innerHTML = `⚠️ ${errMsg}`;
@@ -727,9 +884,7 @@
                 setDiscSpin(false);
             });
 
-            // ============================================================
-            //  Inisialisasi
-            // ============================================================
+            // ===== INIT =====
             resetSearch();
             player.src = "";
         })();
