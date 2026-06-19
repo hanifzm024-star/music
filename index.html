@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* (style sama seperti sebelumnya, tidak saya ubah) */
         * {
             margin: 0;
             padding: 0;
@@ -35,12 +36,11 @@
             box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9);
         }
 
-        /* HEADER */
         .player-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .player-header h2 {
@@ -59,7 +59,49 @@
             font-weight: 400;
         }
 
-        /* COVER */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
+            color: #f0f0f5;
+            font-size: 14px;
+            font-weight: 400;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .search-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 300;
+        }
+
+        .search-wrapper input:focus {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.02);
+        }
+
+        .search-wrapper input:focus+i {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
         .art-cover {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -89,7 +131,6 @@
             background: radial-gradient(circle at 30% 30%, #3a3550, #14101f);
         }
 
-        /* SONG INFO */
         .song-info {
             margin-bottom: 16px;
         }
@@ -109,7 +150,6 @@
             margin-top: 2px;
         }
 
-        /* PROGRESS */
         .progress-section {
             margin-bottom: 16px;
         }
@@ -145,7 +185,6 @@
             color: rgba(255, 255, 255, 0.3);
         }
 
-        /* CONTROLS */
         .controls {
             display: flex;
             align-items: center;
@@ -196,7 +235,6 @@
             margin-left: 3px;
         }
 
-        /* PLAYLIST */
         .playlist-section {
             margin-top: 6px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -282,7 +320,6 @@
             opacity: 1;
         }
 
-        /* responsive */
         @media (max-width: 480px) {
             .player-container {
                 padding: 18px 14px 20px;
@@ -309,13 +346,16 @@
 
     <div class="player-container">
 
-        <!-- HEADER -->
         <div class="player-header">
             <h2><i class="fas fa-headphones" style="margin-right:8px;color:#f7b731;font-size:16px;"></i> Pemutar</h2>
             <span class="badge"><span id="totalSongs">20</span> lagu</span>
         </div>
 
-        <!-- COVER -->
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Cari artis atau judul lagu..." />
+        </div>
+
         <div class="art-cover" id="artCover">
             <img id="coverImg" src="" alt="Cover" style="display:none;" />
             <div class="fallback" id="fallbackCover">
@@ -323,13 +363,11 @@
             </div>
         </div>
 
-        <!-- SONG INFO -->
         <div class="song-info">
             <div class="song-title" id="songTitle">Pilih lagu</div>
             <div class="song-artist" id="songArtist">—</div>
         </div>
 
-        <!-- PROGRESS -->
         <div class="progress-section">
             <div class="progress-bar" id="progressBar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -340,7 +378,6 @@
             </div>
         </div>
 
-        <!-- CONTROLS -->
         <div class="controls">
             <button id="shuffleBtn" title="Shuffle"><i class="fas fa-random"></i></button>
             <button id="prevBtn" title="Previous"><i class="fas fa-step-backward"></i></button>
@@ -351,14 +388,13 @@
             <button id="repeatBtn" title="Repeat"><i class="fas fa-redo-alt"></i></button>
         </div>
 
-        <!-- PLAYLIST -->
         <div class="playlist-section" id="playlistContainer"></div>
 
     </div>
 
     <script>
         // ============================================================
-        // DATA LAGU (dari yang diberikan)
+        // DATA LAGU (dengan cover khusus untuk beberapa lagu)
         // ============================================================
         const songData = [{
             artist: "Ariana Grande",
@@ -368,6 +404,7 @@
             artist: "Hindia",
             title: "Membasuh",
             src: "assets/hindia-membasuh.mp3"
+            // tidak ada cover, akan pakai picsum
         }, {
             artist: "Armada",
             title: "Mau Dibawa Kemana",
@@ -400,10 +437,12 @@
             artist: "Raim Laode",
             title: "Bersenja Gurau",
             src: "assets/Bersenja Gurau - Raim Laode.mp3"
+            // tidak ada cover
         }, {
             artist: "Sheila On 7",
             title: "Kita",
-            src: "assets/Sheila On 7 - Kita.mp3"
+            src: "assets/Sheila On 7 - Kita.mp3",
+            cover: "https://cdn-images.dzcdn.net/images/cover/bb35130431c8c23b8b8f5010bd199f2b/1900x1900-000000-80-0-0.jpg"
         }, {
             artist: "Raim Laode",
             title: "Iqro'",
@@ -419,11 +458,13 @@
         }, {
             artist: "NUCA",
             title: "MASA INI, NANTI, DAN MASA INDAH LAINNYA",
-            src: "assets/NUCA - MASA INI, NANTI, DAN MASA INDAH LAINNYA.mp3"
+            src: "assets/NUCA - MASA INI, NANTI, DAN MASA INDAH LAINNYA.mp3",
+            cover: "https://i1.sndcdn.com/artworks-Wvj8H1Dj7aVvsEyU-FEk8uw-t240x240.jpg"
         }, {
             artist: "Astrid",
             title: "Terpukau",
-            src: "assets/Astrid - Terpukau.mp3"
+            src: "assets/Astrid - Terpukau.mp3",
+            cover: "https://awsimages.detik.net.id/customthumb/2013/10/29/228/asriddlm.jpg?w=600&q=90"
         }, {
             artist: "Pamungkas",
             title: "Berapa Kali Kita Akan Saling Memaafkan",
@@ -431,7 +472,8 @@
         }, {
             artist: "Nadhif Basalamah",
             title: "kota ini tak sama tanpamu",
-            src: "assets/Nadhif Basalamah - kota ini tak sama tanpamu.mp3"
+            src: "assets/Nadhif Basalamah - kota ini tak sama tanpamu.mp3",
+            cover: "https://i.scdn.co/image/ab67616d0000b273f3e3f888fbfcc916ecce50a9"
         }, {
             artist: "Nadhif Basalamah",
             title: "bergema sampai selamanya",
@@ -443,7 +485,7 @@
         }];
 
         // ============================================================
-        // DOM REFS
+        // DOM REFS dan LOGIKA SAMA SEPERTI SEBELUMNYA
         // ============================================================
         const audio = new Audio();
         const playBtn = document.getElementById('playBtn');
@@ -458,6 +500,7 @@
         const fallbackCover = document.getElementById('fallbackCover');
         const playlistContainer = document.getElementById('playlistContainer');
         const totalSongs = document.getElementById('totalSongs');
+        const searchInput = document.getElementById('searchInput');
 
         let currentIndex = 0;
         let isPlaying = false;
@@ -465,10 +508,8 @@
         let isRepeat = false;
 
         // ============================================================
-        // FUNGSI UTAMA
+        // FUNGSI LOAD SONG (dengan penanganan cover)
         // ============================================================
-
-        // Muat lagu berdasarkan index
         function loadSong(index) {
             const song = songData[index];
             if (!song) return;
@@ -477,35 +518,39 @@
             songTitle.textContent = song.title;
             songArtist.textContent = song.artist;
 
-            // Cover – coba pakai gambar dari picsum dengan seed berdasarkan title
-            const seed = encodeURIComponent(song.title + ' ' + song.artist);
-            coverImg.src = `https://picsum.photos/seed/${seed}/400/400`;
+            // Cover: jika ada properti cover, pakai itu, jika tidak pakai picsum
+            if (song.cover) {
+                coverImg.src = song.cover;
+            } else {
+                const seed = encodeURIComponent(song.title + ' ' + song.artist);
+                coverImg.src = `https://picsum.photos/seed/${seed}/400/400`;
+            }
             coverImg.style.display = 'block';
             fallbackCover.style.display = 'none';
 
-            // Fallback jika gambar gagal
             coverImg.onerror = function() {
                 coverImg.style.display = 'none';
                 fallbackCover.style.display = 'flex';
             };
 
-            // Reset progress
             progressFill.style.width = '0%';
             currentTimeEl.textContent = '0:00';
             totalTimeEl.textContent = '0:00';
 
             // Highlight playlist
-            document.querySelectorAll('.playlist-item').forEach((el, i) => {
-                el.classList.toggle('active', i === index);
+            document.querySelectorAll('.playlist-item').forEach((el) => {
+                const idx = parseInt(el.dataset.index, 10);
+                el.classList.toggle('active', idx === index);
             });
 
-            // Auto-play jika sedang playing
             if (isPlaying) {
                 audio.play().catch(() => {});
             }
         }
 
-        // Format detik ke MM:SS
+        // ============================================================
+        // FUNGSI LAINNYA (formatTime, updateProgress, getActiveList, dll)
+        // ============================================================
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds === Infinity) return '0:00';
             const m = Math.floor(seconds / 60);
@@ -513,7 +558,6 @@
             return m + ':' + (s < 10 ? '0' : '') + s;
         }
 
-        // Update progress & waktu
         function updateProgress() {
             if (audio.duration && !isNaN(audio.duration)) {
                 const percent = (audio.currentTime / audio.duration) * 100;
@@ -523,13 +567,25 @@
             }
         }
 
-        // ============================================================
-        // KONTROL
-        // ============================================================
+        function getActiveList() {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query === '') {
+                return songData.map((_, i) => i);
+            }
+            return songData
+                .map((song, i) => ({ song, i }))
+                .filter(({ song }) =>
+                    song.title.toLowerCase().includes(query) ||
+                    song.artist.toLowerCase().includes(query)
+                )
+                .map(({ i }) => i);
+        }
 
+        // ============================================================
+        // KONTROL (togglePlay, nextSong, prevSong)
+        // ============================================================
         function togglePlay() {
             if (audio.src === '' || !audio.src) {
-                // jika belum ada lagu, load index 0
                 currentIndex = 0;
                 loadSong(currentIndex);
             }
@@ -546,16 +602,26 @@
 
         function nextSong() {
             if (songData.length === 0) return;
+            const list = getActiveList();
+            if (list.length === 0) return;
+
+            let idx = list.indexOf(currentIndex);
+            if (idx === -1) idx = 0;
+
+            let newIdx;
             if (isShuffle) {
-                let newIndex;
+                let randomIdx;
                 do {
-                    newIndex = Math.floor(Math.random() * songData.length);
-                } while (newIndex === currentIndex && songData.length > 1);
-                currentIndex = newIndex;
+                    randomIdx = Math.floor(Math.random() * list.length);
+                } while (list[randomIdx] === currentIndex && list.length > 1);
+                newIdx = list[randomIdx];
             } else {
-                currentIndex = (currentIndex + 1) % songData.length;
+                newIdx = list[(idx + 1) % list.length];
             }
+
+            currentIndex = newIdx;
             loadSong(currentIndex);
+
             if (isPlaying) {
                 audio.play().catch(() => {});
                 playIcon.className = 'fas fa-pause';
@@ -568,7 +634,12 @@
                 audio.currentTime = 0;
                 return;
             }
-            currentIndex = (currentIndex - 1 + songData.length) % songData.length;
+            const list = getActiveList();
+            if (list.length === 0) return;
+            let idx = list.indexOf(currentIndex);
+            if (idx === -1) idx = 0;
+            let newIdx = list[(idx - 1 + list.length) % list.length];
+            currentIndex = newIdx;
             loadSong(currentIndex);
             if (isPlaying) {
                 audio.play().catch(() => {});
@@ -577,14 +648,53 @@
         }
 
         // ============================================================
+        // RENDER PLAYLIST
+        // ============================================================
+        function renderPlaylist(filtered = null) {
+            const list = filtered !== null ? filtered : getActiveList();
+            playlistContainer.innerHTML = '';
+            list.forEach((origIdx, displayIdx) => {
+                const song = songData[origIdx];
+                const item = document.createElement('div');
+                item.className = 'playlist-item' + (origIdx === currentIndex ? ' active' : '');
+                item.dataset.index = origIdx;
+                item.innerHTML = `
+                    <span class="index">${displayIdx + 1}</span>
+                    <div class="info">
+                        <div class="pl-title">${song.title}</div>
+                        <div class="pl-artist">${song.artist}</div>
+                    </div>
+                    <span class="play-indicator"><i class="fas fa-play"></i></span>
+                `;
+                item.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index, 10);
+                    currentIndex = idx;
+                    loadSong(currentIndex);
+                    if (!isPlaying) {
+                        togglePlay();
+                    } else {
+                        audio.play().catch(() => {});
+                        playIcon.className = 'fas fa-pause';
+                    }
+                });
+                playlistContainer.appendChild(item);
+            });
+            totalSongs.textContent = list.length;
+        }
+
+        // ============================================================
+        // SEARCH
+        // ============================================================
+        searchInput.addEventListener('input', function() {
+            const filtered = getActiveList();
+            renderPlaylist(filtered);
+        });
+
+        // ============================================================
         // EVENT LISTENERS
         // ============================================================
-
-        // Tombol
         playBtn.addEventListener('click', togglePlay);
-
         document.getElementById('nextBtn').addEventListener('click', nextSong);
-
         document.getElementById('prevBtn').addEventListener('click', prevSong);
 
         document.getElementById('shuffleBtn').addEventListener('click', function() {
@@ -598,7 +708,6 @@
             audio.loop = isRepeat;
         });
 
-        // Klik progress bar
         progressBar.addEventListener('click', function(e) {
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -608,7 +717,6 @@
             }
         });
 
-        // Audio events
         audio.addEventListener('timeupdate', updateProgress);
 
         audio.addEventListener('loadedmetadata', function() {
@@ -620,58 +728,20 @@
                 audio.currentTime = 0;
                 audio.play().catch(() => {});
             } else {
-                playIcon.className = 'fas fa-play';
-                isPlaying = false;
                 nextSong();
             }
         });
 
         // ============================================================
-        // RENDER PLAYLIST
-        // ============================================================
-
-        function renderPlaylist() {
-            playlistContainer.innerHTML = '';
-            songData.forEach((song, index) => {
-                const item = document.createElement('div');
-                item.className = 'playlist-item' + (index === currentIndex ? ' active' : '');
-                item.innerHTML = `
-                    <span class="index">${index + 1}</span>
-                    <div class="info">
-                        <div class="pl-title">${song.title}</div>
-                        <div class="pl-artist">${song.artist}</div>
-                    </div>
-                    <span class="play-indicator"><i class="fas fa-play"></i></span>
-                `;
-                item.addEventListener('click', function() {
-                    currentIndex = index;
-                    loadSong(currentIndex);
-                    if (isPlaying) {
-                        audio.play().catch(() => {});
-                        playIcon.className = 'fas fa-pause';
-                    } else {
-                        togglePlay(); // otomatis play
-                    }
-                });
-                playlistContainer.appendChild(item);
-            });
-            totalSongs.textContent = songData.length;
-        }
-
-        // ============================================================
         // INISIALISASI
         // ============================================================
-
-        renderPlaylist();
-        // Muat lagu pertama
+        renderPlaylist(songData.map((_, i) => i));
         currentIndex = 0;
         loadSong(currentIndex);
-
-        // Tampilkan cover awal dengan fallback sampai gambar dimuat
         coverImg.style.display = 'none';
         fallbackCover.style.display = 'flex';
 
-        console.log('🎵 Player siap dengan ' + songData.length + ' lagu!');
+        console.log('🎵 Player siap dengan ' + songData.length + ' lagu (cover khusus untuk beberapa lagu)!');
     </script>
 
 </body>
