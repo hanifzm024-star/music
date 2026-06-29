@@ -21,7 +21,6 @@
             --transition-speed: 0.3s;
         }
 
-        /* ===== RESET & BASE ===== */
         *,
         *::before,
         *::after {
@@ -41,7 +40,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== BACKGROUND ===== */
         body::before {
             content: '';
             position: fixed;
@@ -62,13 +60,11 @@
                     rgba(6, 8, 18, 0.92) 100%);
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 0;
             height: 0;
         }
 
-        /* ===== APP WRAPPER ===== */
         .app {
             max-width: 420px;
             margin: 0 auto;
@@ -188,6 +184,7 @@
             border: 1px solid var(--glass-border);
             transform: scale(0.92);
             opacity: 0.70;
+            cursor: pointer;
         }
 
         .featured-item.active {
@@ -255,7 +252,6 @@
             border-color: rgba(255, 120, 120, 0.40);
         }
 
-        /* carousel dots */
         .carousel-dots {
             display: flex;
             justify-content: center;
@@ -315,7 +311,7 @@
             background: rgba(255, 255, 255, 0.12);
         }
 
-        /* ===== NEW RELEASES (horizontal scroll) ===== */
+        /* ===== NEW RELEASES ===== */
         .new-releases-scroll {
             display: flex;
             gap: 14px;
@@ -371,7 +367,6 @@
             display: block;
         }
 
-        /* play overlay on card image */
         .release-card .rc-image .play-overlay {
             position: absolute;
             inset: 0;
@@ -439,7 +434,7 @@
             flex-shrink: 0;
         }
 
-        /* ===== TRENDING NOW (vertical list) ===== */
+        /* ===== TRENDING NOW ===== */
         .trending-list {
             display: flex;
             flex-direction: column;
@@ -675,7 +670,7 @@
             transform: scale(0.90);
         }
 
-        /* ===== DARK MODE TOGGLE ===== */
+        /* ===== DARK MODE ===== */
         body.dark-mode {
             --glass-bg: rgba(10, 14, 26, 0.55);
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -737,7 +732,6 @@
             }
         }
 
-        /* ===== UTILITY ===== */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(var(--glass-blur));
@@ -762,7 +756,6 @@
         .app>* {
             animation: fadeUp 0.6s ease-out both;
         }
-
         .app>*:nth-child(2) {
             animation-delay: 0.08s;
         }
@@ -779,7 +772,7 @@
             animation-delay: 0.40s;
         }
 
-        /* mini player indicator */
+        /* ===== NOW PLAYING INDICATOR ===== */
         .now-playing-indicator {
             position: fixed;
             bottom: calc(var(--nav-height) + 12px);
@@ -858,7 +851,6 @@
             transform: scale(0.9);
         }
 
-        /* progress bar */
         .now-playing-indicator .np-progress {
             flex: 1;
             height: 3px;
@@ -881,6 +873,34 @@
             .now-playing-indicator .np-progress {
                 min-width: 40px;
             }
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: calc(var(--nav-height) + 80px);
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 16px;
+            padding: 12px 24px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
@@ -914,7 +934,7 @@
         <section>
             <div class="section-header">
                 <h2>New Releases</h2>
-                <button class="see-all">See All <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></button>
+                <button class="see-all" id="seeAllReleases">See All <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></button>
             </div>
             <div class="new-releases-scroll" id="newReleasesScroll"></div>
         </section>
@@ -926,7 +946,7 @@
         <section style="padding-bottom:6px;">
             <div class="section-header">
                 <h2>Trending Now</h2>
-                <button class="see-all">See All <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></button>
+                <button class="see-all" id="seeAllTrending">See All <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></button>
             </div>
             <div class="trending-list" id="trendingList"></div>
         </section>
@@ -957,9 +977,10 @@
         </button>
     </nav>
 
-    <!-- ===== AUDIO PLAYER & NOW PLAYING INDICATOR ===== -->
+    <!-- ===== AUDIO PLAYER ===== -->
     <audio id="audioPlayer" preload="metadata"></audio>
 
+    <!-- ===== NOW PLAYING INDICATOR ===== -->
     <div class="now-playing-indicator" id="nowPlayingIndicator">
         <div class="np-info">
             <div class="np-title" id="npTitle">Title</div>
@@ -974,9 +995,12 @@
         </div>
     </div>
 
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
     <script>
         // ============================================================
-        // DATA LAGU + COVER
+        // DATA LAGU LOKAL — SEMUA FILE ASLI DIREKTORI assets/
         // ============================================================
         const songData = [{
             artist: "Ariana Grande",
@@ -1106,14 +1130,8 @@
         }];
 
         // ============================================================
-        // REPLACE SRC WITH DEMO URL (karena file aset tidak tersedia)
+        // TIDAK ADA LAGI REPLACEMENT DENGAN DEMO URL — SEMUA LAGU LOKAL
         // ============================================================
-        const DEMO_BASE = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-';
-        songData.forEach((item, i) => {
-            // gunakan 1-10, mod 10 +1
-            const num = (i % 10) + 1;
-            item.src = `${DEMO_BASE}${num}.mp3`;
-        });
 
         // ============================================================
         // AUDIO PLAYER & STATE
@@ -1126,9 +1144,23 @@
         const npCloseBtn = document.getElementById('npCloseBtn');
         const npProgressFill = document.getElementById('npProgressFill');
         const npProgress = document.getElementById('npProgress');
+        const toast = document.getElementById('toast');
 
         let currentIndex = null;
         let isPlaying = false;
+        let toastTimer = null;
+
+        // ============================================================
+        // TOAST HELPER
+        // ============================================================
+        function showToast(msg) {
+            if (toastTimer) clearTimeout(toastTimer);
+            toast.textContent = msg;
+            toast.classList.add('show');
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
 
         // ============================================================
         // FUNGSI PLAY / PAUSE
@@ -1143,15 +1175,19 @@
                 isPlaying = false;
                 updateNowPlayingUI(false);
                 updateCardPlayingState(index, false);
+                showToast('⏸ Paused');
                 return;
             }
 
             // jika sama dan pause, lanjutkan
             if (currentIndex === index && !isPlaying) {
-                audio.play();
+                audio.play().catch(() => {
+                    showToast('⚠️ Gagal memutar lagu');
+                });
                 isPlaying = true;
                 updateNowPlayingUI(true);
                 updateCardPlayingState(index, true);
+                showToast(`▶️ ${song.title} — ${song.artist}`);
                 return;
             }
 
@@ -1159,44 +1195,53 @@
             currentIndex = index;
             audio.src = song.src;
             audio.load();
-            audio.play().catch(() => {});
+            audio.play().catch(() => {
+                showToast('⚠️ Gagal memutar lagu, cek file audio');
+            });
             isPlaying = true;
             updateNowPlayingUI(true);
             updateCardPlayingState(index, true);
-            // update indicator info
             npTitle.textContent = song.title;
             npArtist.textContent = song.artist;
             indicator.classList.add('visible');
+            showToast(`🎵 ${song.title} — ${song.artist}`);
         }
 
         function togglePlayPause() {
-            if (currentIndex === null) return;
+            if (currentIndex === null) {
+                showToast('Pilih lagu dulu');
+                return;
+            }
             if (isPlaying) {
                 audio.pause();
                 isPlaying = false;
+                updateNowPlayingUI(false);
+                updateCardPlayingState(currentIndex, false);
+                showToast('⏸ Paused');
             } else {
-                audio.play();
+                audio.play().catch(() => {
+                    showToast('⚠️ Gagal melanjutkan');
+                });
                 isPlaying = true;
+                updateNowPlayingUI(true);
+                updateCardPlayingState(currentIndex, true);
+                const song = songData[currentIndex];
+                showToast(`▶️ ${song.title} — ${song.artist}`);
             }
-            updateNowPlayingUI(isPlaying);
-            updateCardPlayingState(currentIndex, isPlaying);
         }
 
         function updateNowPlayingUI(playing) {
             const icon = npPlayPauseBtn.querySelector('i');
-            if (playing) {
-                icon.className = 'fas fa-pause';
-            } else {
-                icon.className = 'fas fa-play';
-            }
+            icon.className = playing ? 'fas fa-pause' : 'fas fa-play';
         }
 
         function updateCardPlayingState(index, playing) {
-            // hapus semua kelas playing
-            document.querySelectorAll('.release-card, .trending-card').forEach(el => el.classList.remove('playing'));
+            document.querySelectorAll('.release-card, .trending-card, .featured-item').forEach(el => el.classList.remove(
+            'playing'));
             if (playing && index !== null) {
-                // cari kartu dengan data-index
-                document.querySelectorAll(`.release-card[data-index="${index}"], .trending-card[data-index="${index}"]`)
+                document.querySelectorAll(
+                        `.release-card[data-index="${index}"], .trending-card[data-index="${index}"], .featured-item[data-index="${index}"]`
+                        )
                     .forEach(el => el.classList.add('playing'));
             }
         }
@@ -1215,14 +1260,26 @@
             isPlaying = false;
             updateNowPlayingUI(false);
             updateCardPlayingState(currentIndex, false);
-            // auto play next? kita tidak lakukan, biar berhenti
+            showToast('⏹ Lagu selesai');
+            // auto-play next
+            if (currentIndex !== null && currentIndex < songData.length - 1) {
+                const next = currentIndex + 1;
+                showToast(`⏭ Auto-play: ${songData[next].title}`);
+                setTimeout(() => playSong(next), 600);
+            } else if (currentIndex !== null && currentIndex === songData.length - 1) {
+                showToast('📻 Akhir daftar putar');
+            }
+        });
+
+        audio.addEventListener('error', () => {
+            showToast('⚠️ File audio tidak ditemukan: pastikan file ada di folder assets/');
         });
 
         // klik progress untuk seek
         npProgress.addEventListener('click', (e) => {
             if (!audio.duration) return;
             const rect = npProgress.getBoundingClientRect();
-            const pct = (e.clientX - rect.left) / rect.width;
+            const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
             audio.currentTime = pct * audio.duration;
         });
 
@@ -1243,62 +1300,64 @@
             updateCardPlayingState(null, false);
             updateNowPlayingUI(false);
             npProgressFill.style.width = '0%';
+            showToast('⏹ Player ditutup');
         });
 
-        // klik indicator untuk expand (bisa ke player penuh, tapi kita skip)
         indicator.addEventListener('click', (e) => {
             if (e.target.closest('.np-controls') || e.target.closest('.np-progress')) return;
-            // toggle play/pause
             togglePlayPause();
         });
 
         // ============================================================
-        // RENDER FUNCTIONS (dengan event play)
+        // RENDER FUNCTIONS
         // ============================================================
         function getSubset(arr, start, count) {
             return arr.slice(start, start + count);
         }
 
-        function shuffleArray(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
         // ===== FEATURED CAROUSEL =====
-        const carouselData = getSubset(songData, 0, 7);
-        const changesItem = {
-            artist: "CHANGES",
-            title: "CHANGES",
-            cover: "",
-            isChanges: true,
-            src: ""
-        };
-        const featuredItems = [...carouselData];
-        featuredItems[3] = changesItem;
+        // Ambil 7 lagu untuk carousel, gunakan lagu pertama + 6 lainnya
+        const carouselData = [];
+        const usedIndices = new Set();
+        // pastikan lagu pertama masuk
+        carouselData.push(songData[0]);
+        usedIndices.add(0);
+        // ambil 6 lagu acak lainnya
+        const shuffled = [...songData.slice(1)];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        for (let i = 0; i < Math.min(6, shuffled.length); i++) {
+            const idx = songData.indexOf(shuffled[i]);
+            if (!usedIndices.has(idx)) {
+                carouselData.push(shuffled[i]);
+                usedIndices.add(idx);
+            }
+        }
+        // jika kurang dari 7, tambahkan dari awal
+        while (carouselData.length < 7) {
+            for (let i = 0; i < songData.length && carouselData.length < 7; i++) {
+                if (!usedIndices.has(i)) {
+                    carouselData.push(songData[i]);
+                    usedIndices.add(i);
+                }
+            }
+        }
 
         const carouselEl = document.getElementById('featuredCarousel');
         const dotsEl = document.getElementById('carouselDots');
 
         function renderFeatured() {
             carouselEl.innerHTML = '';
-            featuredItems.forEach((item, idx) => {
+            carouselData.forEach((item, idx) => {
                 const div = document.createElement('div');
-                div.className = 'featured-item' + (idx === 3 ? ' active' : '');
-                div.dataset.index = idx;
+                div.className = 'featured-item' + (idx === 0 ? ' active' : '');
+                div.dataset.index = songData.indexOf(item);
 
                 const img = document.createElement('img');
-                if (item.isChanges) {
-                    img.src =
-                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"%3E%3Crect width="400" height="400" fill="%23cc2233"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="40" font-weight="bold" fill="white" text-anchor="middle" dy=".3em"%3ECHANGES%3C/text%3E%3C/svg%3E';
-                    img.alt = 'CHANGES';
-                } else {
-                    img.src = item.cover || 'https://placehold.co/400x400/2a2f3e/ffffff?text=No+Cover';
-                    img.alt = item.title;
-                }
+                img.src = item.cover || 'https://placehold.co/400x400/2a2f3e/ffffff?text=No+Cover';
+                img.alt = item.title;
                 img.loading = 'lazy';
                 div.appendChild(img);
 
@@ -1306,48 +1365,42 @@
                 overlay.className = 'featured-overlay';
                 const titleSpan = document.createElement('div');
                 titleSpan.className = 'f-title';
-                titleSpan.textContent = item.isChanges ? 'CHANGES' : item.title;
+                titleSpan.textContent = item.title;
                 const artistSpan = document.createElement('div');
                 artistSpan.className = 'f-artist';
-                artistSpan.textContent = item.isChanges ? 'Featured Album' : item.artist;
+                artistSpan.textContent = item.artist;
                 overlay.appendChild(titleSpan);
                 overlay.appendChild(artistSpan);
                 div.appendChild(overlay);
 
-                if (idx === 3) {
+                // badge untuk item pertama
+                if (idx === 0) {
                     const badge = document.createElement('div');
                     badge.className = 'featured-badge featured-red';
                     badge.textContent = '★ Featured';
                     div.appendChild(badge);
-                } else if (idx === 0 || idx === 6) {
+                } else if (idx < 3) {
                     const badge = document.createElement('div');
                     badge.className = 'featured-badge';
                     badge.textContent = 'New';
                     div.appendChild(badge);
                 }
 
-                // klik untuk play (kecuali CHANGES karena bukan lagu nyata)
-                if (!item.isChanges) {
-                    div.style.cursor = 'pointer';
-                    div.addEventListener('click', () => {
-                        // cari indeks asli di songData
-                        const realIndex = songData.findIndex(s => s.title === item.title && s.artist === item.artist);
-                        if (realIndex !== -1) {
-                            playSong(realIndex);
-                        }
-                    });
-                }
+                const realIndex = songData.indexOf(item);
+                div.addEventListener('click', () => {
+                    if (realIndex !== -1) playSong(realIndex);
+                });
 
                 carouselEl.appendChild(div);
             });
 
             dotsEl.innerHTML = '';
-            featuredItems.forEach((_, idx) => {
+            carouselData.forEach((_, idx) => {
                 const dot = document.createElement('span');
-                dot.className = 'dot' + (idx === 3 ? ' active' : '');
+                dot.className = 'dot' + (idx === 0 ? ' active' : '');
                 dot.dataset.index = idx;
                 dot.addEventListener('click', () => {
-                    const target = carouselEl.querySelector(`.featured-item[data-index="${idx}"]`);
+                    const target = carouselEl.querySelector(`.featured-item[data-index="${songData.indexOf(carouselData[idx])}"]`);
                     if (target) {
                         target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                     }
@@ -1386,8 +1439,8 @@
 
         function renderNewReleases() {
             releasesScroll.innerHTML = '';
-            newReleasesData.forEach((item, index) => {
-                const realIndex = songData.findIndex(s => s.title === item.title && s.artist === item.artist);
+            newReleasesData.forEach((item) => {
+                const realIndex = songData.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'release-card';
                 card.dataset.index = realIndex;
@@ -1400,12 +1453,10 @@
                 img.loading = 'lazy';
                 imgWrap.appendChild(img);
 
-                // play overlay
                 const overlay = document.createElement('div');
                 overlay.className = 'play-overlay';
                 overlay.innerHTML = '<i class="fas fa-play"></i>';
                 imgWrap.appendChild(overlay);
-
                 card.appendChild(imgWrap);
 
                 const title = document.createElement('div');
@@ -1437,8 +1488,8 @@
 
         function renderTrending() {
             trendingList.innerHTML = '';
-            trendingData.forEach((item, idx) => {
-                const realIndex = songData.findIndex(s => s.title === item.title && s.artist === item.artist);
+            trendingData.forEach((item) => {
+                const realIndex = songData.indexOf(item);
                 const card = document.createElement('div');
                 card.className = 'trending-card';
                 card.dataset.index = realIndex;
@@ -1455,7 +1506,6 @@
                 overlay.className = 'play-overlay';
                 overlay.innerHTML = '<i class="fas fa-play"></i>';
                 imgWrap.appendChild(overlay);
-
                 card.appendChild(imgWrap);
 
                 const info = document.createElement('div');
@@ -1480,8 +1530,12 @@
                     const icon = heartBtn.querySelector('i');
                     icon.classList.toggle('far');
                     icon.classList.toggle('fas');
-                    icon.classList.toggle('fa-heart');
                     heartBtn.classList.toggle('heart-active');
+                    if (heartBtn.classList.contains('heart-active')) {
+                        showToast(`❤️ ${item.title} disukai`);
+                    } else {
+                        showToast(`💔 ${item.title} dihapus dari suka`);
+                    }
                 });
                 const moreBtn = document.createElement('button');
                 moreBtn.className = 'tc-icon';
@@ -1509,10 +1563,11 @@
             document.body.classList.toggle('dark-mode', darkMode);
             const icon = darkToggle.querySelector('i');
             icon.className = darkMode ? 'fas fa-sun' : 'fas fa-moon';
+            showToast(darkMode ? '🌙 Dark mode' : '☀️ Light mode');
         });
 
         // ============================================================
-        // BOTTOM NAV (player button toggle play/pause)
+        // BOTTOM NAV
         // ============================================================
         const navItems = document.querySelectorAll('.bottom-nav .nav-item');
         navItems.forEach(btn => {
@@ -1520,10 +1575,27 @@
                 navItems.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 if (btn.dataset.tab === 'player') {
-                    // toggle play/pause
                     togglePlayPause();
+                } else if (btn.dataset.tab === 'home') {
+                    showToast('🏠 Home');
+                } else if (btn.dataset.tab === 'library') {
+                    showToast('📚 Library');
+                } else if (btn.dataset.tab === 'search') {
+                    showToast('🔍 Search');
+                } else if (btn.dataset.tab === 'likes') {
+                    showToast('❤️ Likes');
                 }
             });
+        });
+
+        // ============================================================
+        // SEE ALL BUTTONS
+        // ============================================================
+        document.getElementById('seeAllReleases').addEventListener('click', () => {
+            showToast('📋 Semua rilis baru');
+        });
+        document.getElementById('seeAllTrending').addEventListener('click', () => {
+            showToast('🔥 Semua trending');
         });
 
         // ============================================================
@@ -1553,6 +1625,11 @@
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(updateFeaturedDots, 200);
             });
+
+            // Tampilkan pesan selamat datang
+            setTimeout(() => {
+                showToast('🎵 Selamat mendengarkan!');
+            }, 800);
         }
 
         if (document.readyState === 'loading') {
