@@ -1,28 +1,27 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Glassmorphism Music Player</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Harmony - Music Streaming</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ===== CSS Variables ===== */
+        /* ===== CSS VARIABLES ===== */
         :root {
             --glass-bg: rgba(255, 255, 255, 0.10);
-            --glass-border: rgba(255, 255, 255, 0.20);
-            --glass-shadow: rgba(0, 0, 0, 0.35);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: rgba(0, 0, 0, 0.25);
             --glass-blur: 18px;
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.75);
-            --text-muted: rgba(255, 255, 255, 0.45);
-            --accent: #f7c948;
-            --accent-glow: rgba(247, 201, 72, 0.25);
-            --card-radius: 20px;
-            --pill-radius: 60px;
-            --transition-smooth: 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+            --text-muted: rgba(255, 255, 255, 0.50);
+            --card-radius: 16px;
+            --nav-height: 68px;
+            --safe-bottom: env(safe-area-inset-bottom, 8px);
+            --transition-speed: 0.3s;
         }
 
-        /* ===== Reset & Base ===== */
+        /* ===== RESET & BASE ===== */
         *,
         *::before,
         *::after {
@@ -31,367 +30,431 @@
             box-sizing: border-box;
         }
 
+        html,
         body {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0b0e14;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND ===== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: url('https://images.unsplash.com/photo-1534088568595-a310f0a3a5a9?w=1920&q=80') center center / cover no-repeat;
+            filter: brightness(0.75) saturate(1.1);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(180deg,
+                    rgba(10, 14, 26, 0.40) 0%,
+                    rgba(10, 14, 26, 0.70) 60%,
+                    rgba(6, 8, 18, 0.92) 100%);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        /* ===== APP WRAPPER ===== */
+        .app {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 0 16px 0 16px;
+            padding-bottom: calc(var(--nav-height) + 28px + var(--safe-bottom));
+            position: relative;
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #1a0a0a;
-            padding: 16px;
+            flex-direction: column;
+            gap: 22px;
         }
 
-        /* ===== Background ===== */
-        .app {
-            position: relative;
-            width: 100%;
-            max-width: 1100px;
-            height: 92vh;
-            max-height: 820px;
-            border-radius: 40px;
-            overflow: hidden;
-            background: radial-gradient(ellipse at 20% 30%, #b31b1b 0%, #7a1414 30%, #2d0a0a 65%, #0d0505 100%);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0 8px 0;
+            flex-shrink: 0;
+        }
+
+        .header-left {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 28px 28px 24px 28px;
+            gap: 2px;
         }
 
-        .app::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 40px;
-            background: radial-gradient(ellipse at 70% 10%, #f7c948 0%, transparent 50%),
-                radial-gradient(ellipse at 30% 90%, #b31b1b 0%, transparent 55%),
-                radial-gradient(ellipse at 50% 50%, #4a0f0f 0%, transparent 70%);
-            opacity: 0.5;
-            pointer-events: none;
-            z-index: 0;
+        .header-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+            color: #fff;
         }
 
-        .app>* {
+        .header-title span {
+            background: linear-gradient(135deg, #f0e9ff 0%, #b8d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-sub {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 0.2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header-actions .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 17px;
+            cursor: pointer;
+            transition: background var(--transition-speed), transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-actions .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.20);
+            transform: scale(1.04);
+        }
+
+        .header-actions .icon-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* ===== FEATURED CAROUSEL ===== */
+        .featured-section {
+            flex-shrink: 0;
             position: relative;
-            z-index: 1;
+            margin: 0 -16px;
+            padding: 0 16px;
         }
 
-        /* ===== Carousel Wrapper ===== */
-        .carousel-wrapper {
-            flex: 1;
+        .featured-carousel {
             display: flex;
             align-items: center;
-            justify-content: center;
-            min-height: 0;
-            padding: 0 12px;
-        }
-
-        .carousel-container {
-            position: relative;
-            width: 100%;
-            max-width: 780px;
-            height: 100%;
-            max-height: 420px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            perspective: 1200px;
-        }
-
-        /* ===== Carousel Track ===== */
-        .carousel-track {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 8px;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 8px 0 12px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
         }
 
-        /* ===== Card ===== */
-        .card {
-            flex: 0 0 0;
-            width: 200px;
-            min-width: 140px;
-            max-width: 260px;
-            height: 85%;
-            max-height: 340px;
+        .featured-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .featured-item {
+            flex: 0 0 180px;
+            height: 180px;
+            border-radius: 18px;
+            overflow: hidden;
+            scroll-snap-align: center;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.40);
+            border: 1px solid var(--glass-border);
+            transform: scale(0.92);
+            opacity: 0.70;
+        }
+
+        .featured-item.active {
+            flex: 0 0 240px;
+            height: 240px;
+            transform: scale(1);
+            opacity: 1;
+            z-index: 2;
+            box-shadow: 0 12px 44px rgba(0, 0, 0, 0.55);
+            border-color: rgba(255, 255, 255, 0.30);
+        }
+
+        .featured-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .featured-item .featured-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 14px 12px 14px;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .featured-item .featured-overlay .f-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
+        }
+
+        .featured-item .featured-overlay .f-artist {
+            font-size: 12px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.80);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.40);
+        }
+
+        .featured-item .featured-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.20);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: #fff;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.20);
+        }
+
+        .featured-item .featured-badge.featured-red {
+            background: rgba(220, 40, 40, 0.75);
+            border-color: rgba(255, 120, 120, 0.40);
+        }
+
+        /* carousel dots */
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 0 2px 0;
+        }
+
+        .carousel-dots .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .carousel-dots .dot.active {
+            background: #fff;
+            width: 18px;
+            border-radius: 4px;
+        }
+
+        /* ===== SECTION HEADER ===== */
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 0 2px 10px 2px;
+        }
+
+        .section-header h2 {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: #fff;
+        }
+
+        .section-header .see-all {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s;
+            letter-spacing: 0.2px;
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .section-header .see-all:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* ===== NEW RELEASES (horizontal scroll) ===== */
+        .new-releases-scroll {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            overflow-y: visible;
+            padding: 4px 2px 10px 2px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .new-releases-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .release-card {
+            flex: 0 0 148px;
             border-radius: var(--card-radius);
             background: var(--glass-bg);
             backdrop-filter: blur(var(--glass-blur));
             -webkit-backdrop-filter: blur(var(--glass-blur));
             border: 1px solid var(--glass-border);
-            box-shadow: 0 12px 40px var(--glass-shadow);
-            overflow: hidden;
-            transition: all var(--transition-smooth);
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.20);
+            padding: 10px 10px 12px 10px;
+            transition: transform 0.25s, box-shadow 0.25s;
             cursor: pointer;
-            position: relative;
-            opacity: 0.5;
-            transform: scale(0.78) perspective(800px) rotateY(18deg) translateZ(-40px);
-            pointer-events: none;
-            user-select: none;
         }
 
-        .card .card-img {
+        .release-card:active {
+            transform: scale(0.96);
+        }
+
+        .release-card .rc-image {
             width: 100%;
             aspect-ratio: 1/1;
-            background: #1a0a0a;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .card .card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.4s ease;
-        }
-
-        .card .card-body {
-            padding: 10px 14px 12px;
-            background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 64px;
-        }
-
-        .card .card-body .artist {
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            opacity: 0.7;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card .card-body .title {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: 1px;
-        }
-
-        /* -- Active Card (Center) -- */
-        .card.active {
-            flex: 0 0 280px;
-            width: 280px;
-            min-width: 200px;
-            max-width: 320px;
-            height: 100%;
-            max-height: 400px;
-            opacity: 1;
-            transform: scale(1) perspective(800px) rotateY(0) translateZ(0);
-            pointer-events: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 40px var(--accent-glow);
-            border-color: rgba(255, 255, 255, 0.30);
-        }
-
-        .card.active .card-body .artist {
-            opacity: 1;
-            color: var(--accent);
-        }
-
-        .card.active .card-body .title {
-            font-size: 0.95rem;
-        }
-
-        /* -- Left Card -- */
-        .card.left {
-            opacity: 0.6;
-            transform: scale(0.78) perspective(800px) rotateY(22deg) translateX(-20px) translateZ(-50px);
-            pointer-events: none;
-        }
-
-        /* -- Right Card -- */
-        .card.right {
-            opacity: 0.6;
-            transform: scale(0.78) perspective(800px) rotateY(-22deg) translateX(20px) translateZ(-50px);
-            pointer-events: none;
-        }
-
-        /* -- Hidden cards (further out) -- */
-        .card.hidden-left {
-            opacity: 0;
-            transform: scale(0.6) perspective(800px) rotateY(40deg) translateX(-120px) translateZ(-100px);
-            pointer-events: none;
-            width: 0;
-            min-width: 0;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            flex: 0 0 0;
-            border: 0;
-        }
-
-        .card.hidden-right {
-            opacity: 0;
-            transform: scale(0.6) perspective(800px) rotateY(-40deg) translateX(120px) translateZ(-100px);
-            pointer-events: none;
-            width: 0;
-            min-width: 0;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-            flex: 0 0 0;
-            border: 0;
-        }
-
-        /* ===== Carousel Nav Buttons ===== */
-        .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-        }
-
-        .carousel-nav:hover {
-            background: rgba(255, 255, 255, 0.20);
-            border-color: rgba(255, 255, 255, 0.35);
-            transform: translateY(-50%) scale(1.06);
-        }
-
-        .carousel-nav:active {
-            transform: translateY(-50%) scale(0.94);
-        }
-
-        .carousel-nav.prev {
-            left: -12px;
-        }
-
-        .carousel-nav.next {
-            right: -12px;
-        }
-
-        @media (min-width: 768px) {
-            .carousel-nav.prev {
-                left: -20px;
-            }
-            .carousel-nav.next {
-                right: -20px;
-            }
-        }
-
-        /* ===== Bottom Player Bar ===== */
-        .player-bar {
-            flex-shrink: 0;
-            padding: 6px 6px 6px 18px;
-            border-radius: var(--pill-radius);
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-height: 72px;
-            margin-top: 12px;
-        }
-
-        /* -- Left Controls -- */
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-
-        .player-controls button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .player-controls button:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-primary);
-        }
-
-        .player-controls button.play-btn {
-            width: 48px;
-            height: 48px;
-            background: var(--accent);
-            color: #1a0a0a;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 20px rgba(247, 201, 72, 0.35);
-        }
-
-        .player-controls button.play-btn:hover {
-            background: #f5d96a;
-            transform: scale(1.04);
-            box-shadow: 0 6px 28px rgba(247, 201, 72, 0.45);
-        }
-
-        .player-controls button.play-btn:active {
-            transform: scale(0.94);
-        }
-
-        /* -- Center: Song Info + Progress -- */
-        .player-info {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 0;
-            padding: 0 6px;
-        }
-
-        .player-info .thumb {
-            width: 44px;
-            height: 44px;
             border-radius: 10px;
             overflow: hidden;
-            flex-shrink: 0;
-            background: #1a0a0a;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #1a1f2e;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
         }
 
-        .player-info .thumb img {
+        .release-card .rc-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
 
-        .player-info .meta {
+        .release-card .rc-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .release-card .rc-artist {
+            font-size: 11.5px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-top: 1px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .release-card .rc-tag {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.12), transparent);
+            margin: 6px 0 2px 0;
+            flex-shrink: 0;
+        }
+
+        /* ===== TRENDING NOW (vertical list) ===== */
+        .trending-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 2px 0 4px 0;
+        }
+
+        .trending-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 14px 10px 10px;
+            border-radius: var(--card-radius);
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .trending-card:active {
+            transform: scale(0.98);
+        }
+
+        .trending-card .tc-image {
+            flex: 0 0 52px;
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #1a1f2e;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .trending-card .tc-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .trending-card .tc-info {
             flex: 1;
             min-width: 0;
             display: flex;
@@ -399,508 +462,349 @@
             gap: 1px;
         }
 
-        .player-info .meta .p-artist {
-            font-size: 0.6rem;
+        .trending-card .tc-title {
+            font-size: 14px;
             font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: var(--text-muted);
+            color: #fff;
+            line-height: 1.3;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .player-info .meta .p-title {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text-primary);
+        .trending-card .tc-artist {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-secondary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .player-info .meta .p-progress {
+        .trending-card .tc-actions {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 2px;
-            width: 100%;
-            max-width: 200px;
-        }
-
-        .player-info .meta .p-progress .bar {
-            flex: 1;
-            height: 3px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.15);
-            overflow: hidden;
-            cursor: pointer;
-            position: relative;
-            min-width: 40px;
-        }
-
-        .player-info .meta .p-progress .bar .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent), #f5d96a);
-            border-radius: 4px;
-            transition: width 0.08s linear;
-        }
-
-        .player-info .meta .p-progress .time {
-            font-size: 0.55rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            font-variant-numeric: tabular-nums;
-            letter-spacing: 0.02em;
-            white-space: nowrap;
-            min-width: 32px;
-        }
-
-        /* -- Right: Extra Icons -- */
-        .player-extras {
-            display: flex;
-            align-items: center;
-            gap: 2px;
+            gap: 10px;
             flex-shrink: 0;
-            padding-right: 4px;
+            padding-left: 4px;
         }
 
-        .player-extras button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+        .trending-card .tc-actions .tc-icon {
+            color: var(--text-secondary);
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            background: none;
             border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-size: 0.95rem;
+            padding: 4px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
         }
 
-        .player-extras button:hover {
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-secondary);
+        .trending-card .tc-actions .tc-icon:hover {
+            color: #fff;
         }
 
-        /* ===== Waveform animation ===== */
-        .waveform {
+        .trending-card .tc-actions .tc-icon:active {
+            transform: scale(0.88);
+        }
+
+        .trending-card .tc-actions .tc-icon.heart-active {
+            color: #ff4d6d;
+        }
+
+        /* ===== BOTTOM NAVIGATION ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            max-width: 420px;
+            margin: 0 auto;
+            height: calc(var(--nav-height) + var(--safe-bottom));
+            padding-bottom: var(--safe-bottom);
+            background: rgba(18, 22, 36, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.45);
             display: flex;
             align-items: center;
+            justify-content: space-around;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             gap: 2px;
-            height: 20px;
-            margin-left: 4px;
-            flex-shrink: 0;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            background: none;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 16px;
+            min-width: 48px;
+            position: relative;
+            letter-spacing: 0.2px;
         }
 
-        .waveform .bar {
-            width: 3px;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: height 0.2s ease;
-            height: 6px;
+        .bottom-nav .nav-item i {
+            font-size: 20px;
+            transition: transform 0.25s;
         }
 
-        .waveform.playing .bar {
-            animation: wave 0.6s ease-in-out infinite alternate;
+        .bottom-nav .nav-item span {
+            font-size: 9px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
 
-        .waveform.playing .bar:nth-child(1) {
-            animation-delay: 0.0s;
-            height: 10px;
-        }
-        .waveform.playing .bar:nth-child(2) {
-            animation-delay: 0.1s;
-            height: 16px;
-        }
-        .waveform.playing .bar:nth-child(3) {
-            animation-delay: 0.2s;
-            height: 22px;
-        }
-        .waveform.playing .bar:nth-child(4) {
-            animation-delay: 0.3s;
-            height: 14px;
-        }
-        .waveform.playing .bar:nth-child(5) {
-            animation-delay: 0.15s;
-            height: 18px;
-        }
-        .waveform.playing .bar:nth-child(6) {
-            animation-delay: 0.25s;
-            height: 12px;
-        }
-        .waveform.playing .bar:nth-child(7) {
-            animation-delay: 0.05s;
-            height: 20px;
-        }
-        .waveform.playing .bar:nth-child(8) {
-            animation-delay: 0.35s;
-            height: 8px;
+        .bottom-nav .nav-item:hover {
+            color: #fff;
         }
 
-        @keyframes wave {
-            0% {
-                transform: scaleY(0.4);
+        .bottom-nav .nav-item:active {
+            transform: scale(0.90);
+        }
+
+        .bottom-nav .nav-item.active {
+            color: #fff;
+        }
+
+        .bottom-nav .nav-item.active i {
+            transform: scale(1.08);
+        }
+
+        .bottom-nav .nav-item.active span {
+            opacity: 1;
+        }
+
+        .bottom-nav .nav-item.nav-center {
+            background: linear-gradient(135deg, rgba(120, 160, 255, 0.30), rgba(180, 100, 255, 0.25));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            width: 54px;
+            height: 54px;
+            min-width: unset;
+            padding: 0;
+            margin-top: -16px;
+            box-shadow: 0 4px 24px rgba(100, 120, 255, 0.30);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .bottom-nav .nav-item.nav-center i {
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(100, 120, 255, 0.40);
+        }
+
+        .bottom-nav .nav-item.nav-center span {
+            display: none;
+        }
+
+        .bottom-nav .nav-item.nav-center:active {
+            transform: scale(0.90);
+        }
+
+        /* ===== DARK MODE TOGGLE ===== */
+        body.dark-mode {
+            --glass-bg: rgba(10, 14, 26, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0f0f5;
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --text-muted: rgba(255, 255, 255, 0.35);
+        }
+
+        body.dark-mode .bottom-nav {
+            background: rgba(8, 10, 20, 0.80);
+        }
+
+        body.dark-mode .header-actions .icon-btn {
+            background: rgba(10, 14, 26, 0.50);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 380px) {
+            .featured-item {
+                flex: 0 0 140px;
+                height: 140px;
             }
-            100% {
-                transform: scaleY(1);
+            .featured-item.active {
+                flex: 0 0 190px;
+                height: 190px;
             }
-        }
-
-        /* ===== Responsive ===== */
-        @media (max-width: 768px) {
+            .release-card {
+                flex: 0 0 120px;
+            }
             .app {
-                height: 96vh;
-                max-height: none;
-                border-radius: 28px;
-                padding: 16px 14px 14px 14px;
+                padding-left: 12px;
+                padding-right: 12px;
             }
-
-            .carousel-container {
-                max-height: 300px;
-            }
-
-            .card {
-                width: 130px;
-                min-width: 90px;
-                max-width: 170px;
-                height: 75%;
-                max-height: 240px;
-                transform: scale(0.7) perspective(600px) rotateY(16deg) translateZ(-30px);
-            }
-
-            .card.active {
-                flex: 0 0 180px;
-                width: 180px;
-                min-width: 140px;
-                max-width: 220px;
-                height: 90%;
-                max-height: 290px;
-            }
-
-            .card.left {
-                transform: scale(0.7) perspective(600px) rotateY(20deg) translateX(-12px) translateZ(-35px);
-            }
-            .card.right {
-                transform: scale(0.7) perspective(600px) rotateY(-20deg) translateX(12px) translateZ(-35px);
-            }
-
-            .card .card-body {
-                padding: 6px 10px 10px;
-                min-height: 48px;
-            }
-            .card .card-body .artist {
-                font-size: 0.5rem;
-            }
-            .card .card-body .title {
-                font-size: 0.65rem;
-            }
-            .card.active .card-body .title {
-                font-size: 0.78rem;
-            }
-
-            .carousel-nav {
-                width: 34px;
-                height: 34px;
-                font-size: 0.8rem;
-            }
-            .carousel-nav.prev {
-                left: -6px;
-            }
-            .carousel-nav.next {
-                right: -6px;
-            }
-
-            .player-bar {
-                padding: 4px 4px 4px 12px;
-                min-height: 60px;
-                gap: 8px;
-                border-radius: 36px;
-            }
-
-            .player-controls button {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            .player-controls button.play-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-
-            .player-info .thumb {
-                width: 36px;
-                height: 36px;
-                border-radius: 8px;
-            }
-            .player-info .meta .p-artist {
-                font-size: 0.5rem;
-            }
-            .player-info .meta .p-title {
-                font-size: 0.65rem;
-            }
-            .player-info .meta .p-progress .bar {
-                min-width: 24px;
-            }
-            .player-info .meta .p-progress .time {
-                font-size: 0.45rem;
-                min-width: 24px;
-            }
-
-            .player-extras button {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-
-            .waveform {
-                height: 16px;
-                gap: 1.5px;
-            }
-            .waveform .bar {
-                width: 2.5px;
-            }
-            .waveform.playing .bar:nth-child(1) {
-                height: 8px;
-            }
-            .waveform.playing .bar:nth-child(2) {
-                height: 12px;
-            }
-            .waveform.playing .bar:nth-child(3) {
-                height: 18px;
-            }
-            .waveform.playing .bar:nth-child(4) {
-                height: 10px;
-            }
-            .waveform.playing .bar:nth-child(5) {
-                height: 14px;
-            }
-            .waveform.playing .bar:nth-child(6) {
-                height: 8px;
-            }
-            .waveform.playing .bar:nth-child(7) {
-                height: 16px;
-            }
-            .waveform.playing .bar:nth-child(8) {
-                height: 6px;
+            .header-title {
+                font-size: 19px;
             }
         }
 
-        @media (max-width: 480px) {
+        @media (min-width: 600px) {
             .app {
-                padding: 10px 8px 10px 8px;
-                border-radius: 20px;
+                max-width: 480px;
+                padding: 0 24px 0 24px;
+                padding-bottom: calc(var(--nav-height) + 32px + var(--safe-bottom));
             }
-            .carousel-container {
-                max-height: 220px;
+            .featured-item {
+                flex: 0 0 200px;
+                height: 200px;
             }
-            .card {
-                width: 90px;
-                min-width: 70px;
-                max-width: 120px;
-                height: 65%;
-                max-height: 170px;
-                border-radius: 14px;
+            .featured-item.active {
+                flex: 0 0 280px;
+                height: 280px;
             }
-            .card.active {
-                flex: 0 0 130px;
-                width: 130px;
-                min-width: 100px;
-                max-width: 160px;
-                height: 85%;
-                max-height: 210px;
+            .release-card {
+                flex: 0 0 168px;
             }
-            .card .card-body {
-                padding: 4px 8px 8px;
-                min-height: 38px;
+            .bottom-nav {
+                max-width: 480px;
+                border-radius: 28px 28px 0 0;
             }
-            .card .card-body .artist {
-                font-size: 0.4rem;
+        }
+
+        /* ===== UTILITY ===== */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: var(--card-radius);
+            box-shadow: 0 6px 24px var(--glass-shadow);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
             }
-            .card .card-body .title {
-                font-size: 0.5rem;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-            .card.active .card-body .title {
-                font-size: 0.6rem;
-            }
-            .carousel-nav {
-                width: 28px;
-                height: 28px;
-                font-size: 0.65rem;
-            }
-            .carousel-nav.prev {
-                left: -4px;
-            }
-            .carousel-nav.next {
-                right: -4px;
-            }
-            .player-bar {
-                padding: 3px 3px 3px 8px;
-                min-height: 50px;
-                gap: 4px;
-                border-radius: 28px;
-            }
-            .player-controls button {
-                width: 28px;
-                height: 28px;
-                font-size: 0.75rem;
-            }
-            .player-controls button.play-btn {
-                width: 34px;
-                height: 34px;
-                font-size: 0.85rem;
-            }
-            .player-info .thumb {
-                width: 30px;
-                height: 30px;
-                border-radius: 6px;
-            }
-            .player-info .meta .p-artist {
-                font-size: 0.45rem;
-            }
-            .player-info .meta .p-title {
-                font-size: 0.55rem;
-            }
-            .player-info .meta .p-progress {
-                max-width: 100px;
-            }
-            .player-info .meta .p-progress .bar {
-                min-width: 16px;
-            }
-            .player-info .meta .p-progress .time {
-                font-size: 0.4rem;
-                min-width: 18px;
-            }
-            .player-extras button {
-                width: 26px;
-                height: 26px;
-                font-size: 0.7rem;
-            }
-            .waveform {
-                height: 14px;
-                gap: 1px;
-            }
-            .waveform .bar {
-                width: 2px;
-            }
-            .waveform.playing .bar:nth-child(1) {
-                height: 6px;
-            }
-            .waveform.playing .bar:nth-child(2) {
-                height: 10px;
-            }
-            .waveform.playing .bar:nth-child(3) {
-                height: 14px;
-            }
-            .waveform.playing .bar:nth-child(4) {
-                height: 8px;
-            }
-            .waveform.playing .bar:nth-child(5) {
-                height: 12px;
-            }
-            .waveform.playing .bar:nth-child(6) {
-                height: 6px;
-            }
-            .waveform.playing .bar:nth-child(7) {
-                height: 14px;
-            }
-            .waveform.playing .bar:nth-child(8) {
-                height: 4px;
-            }
+        }
+
+        .app>* {
+            animation: fadeUp 0.6s ease-out both;
+        }
+
+        .app>*:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+        .app>*:nth-child(3) {
+            animation-delay: 0.16s;
+        }
+        .app>*:nth-child(4) {
+            animation-delay: 0.24s;
+        }
+        .app>*:nth-child(5) {
+            animation-delay: 0.32s;
+        }
+        .app>*:nth-child(6) {
+            animation-delay: 0.40s;
         }
     </style>
 </head>
 <body>
 
-    <div class="app">
+    <div class="app" id="app">
 
-        <!-- ===== CAROUSEL ===== -->
-        <div class="carousel-wrapper">
-            <div class="carousel-container">
-                <button class="carousel-nav prev" id="carouselPrev" aria-label="Previous">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-
-                <div class="carousel-track" id="carouselTrack"></div>
-
-                <button class="carousel-nav next" id="carouselNext" aria-label="Next">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-title">Hi, <span>Haniff</span></div>
+                <div class="header-sub">Have a great day!</div>
             </div>
-        </div>
-
-        <!-- ===== BOTTOM PLAYER BAR ===== -->
-        <div class="player-bar">
-
-            <!-- Left: Controls -->
-            <div class="player-controls">
-                <button id="btnPrev" aria-label="Previous">
-                    <i class="fas fa-backward"></i>
+            <div class="header-actions">
+                <button class="icon-btn" id="darkModeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
                 </button>
-                <button class="play-btn" id="btnPlay" aria-label="Play / Pause">
-                    <i class="fas fa-play" id="playIcon"></i>
-                </button>
-                <button id="btnNext" aria-label="Next">
-                    <i class="fas fa-forward"></i>
-                </button>
-            </div>
-
-            <!-- Center: Info + Progress -->
-            <div class="player-info">
-                <div class="thumb" id="playerThumb">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=120&h=120&fit=crop&crop=center" alt="cover" />
-                </div>
-                <div class="meta">
-                    <span class="p-artist" id="playerArtist">—</span>
-                    <span class="p-title" id="playerTitle">—</span>
-                    <div class="p-progress">
-                        <div class="bar" id="progressBar">
-                            <div class="fill" id="progressFill"></div>
-                        </div>
-                        <span class="time" id="progressTime">0:00</span>
-                    </div>
-                </div>
-                <div class="waveform" id="waveform">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
-            </div>
-
-            <!-- Right: Extras -->
-            <div class="player-extras">
-                <button aria-label="AirPlay">
-                    <i class="fas fa-tv"></i>
-                </button>
-                <button aria-label="Equalizer">
+                <button class="icon-btn" aria-label="Settings">
                     <i class="fas fa-sliders-h"></i>
                 </button>
-                <button aria-label="Volume">
-                    <i class="fas fa-volume-up"></i>
-                </button>
             </div>
-        </div>
+        </header>
+
+        <!-- ===== FEATURED CAROUSEL ===== -->
+        <section class="featured-section">
+            <div class="featured-carousel" id="featuredCarousel"></div>
+            <div class="carousel-dots" id="carouselDots"></div>
+        </section>
+
+        <!-- ===== NEW RELEASES ===== -->
+        <section>
+            <div class="section-header">
+                <h2>New Releases</h2>
+                <button class="see-all">See All <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></button>
+            </div>
+            <div class="new-releases-scroll" id="newReleasesScroll"></div>
+        </section>
+
+        <!-- ===== DIVIDER ===== -->
+        <div class="divider"></div>
+
+        <!-- ===== TRENDING NOW ===== -->
+        <section style="padding-bottom:6px;">
+            <div class="section-header">
+                <h2>Trending Now</h2>
+                <button class="see-all">See All <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></button>
+            </div>
+            <div class="trending-list" id="trendingList"></div>
+        </section>
 
     </div>
 
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" data-tab="home">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" data-tab="library">
+            <i class="fas fa-th-list"></i>
+            <span>Library</span>
+        </button>
+        <button class="nav-item nav-center" data-tab="player">
+            <i class="fas fa-headphones"></i>
+            <span>Player</span>
+        </button>
+        <button class="nav-item" data-tab="search">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </button>
+        <button class="nav-item" data-tab="likes">
+            <i class="fas fa-heart"></i>
+            <span>Likes</span>
+        </button>
+    </nav>
+
     <script>
         // ============================================================
-        // DATA LAGU + COVER
+        // DATA LAGU + COVER (dari spec)
         // ============================================================
         const songData = [{
             artist: "Ariana Grande",
             title: "Position",
             src: "assets/ariana-grande-positions.mp3",
-            cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=400&fit=crop&crop=center"
+            cover: "https://i.scdn.co/image/ab67616d0000b273d623688488865906052ef96b"
         }, {
             artist: "Hindia",
             title: "Membasuh",
@@ -1024,236 +928,290 @@
         }];
 
         // ============================================================
-        // STATE
+        // UTILITY: ambil subset / shuffle
         // ============================================================
-        let currentIndex = 0;
-        let isPlaying = false;
-        let audio = new Audio();
-        let currentSong = null;
+        function getSubset(arr, start, count) {
+            return arr.slice(start, start + count);
+        }
 
-        // DOM refs
-        const track = document.getElementById('carouselTrack');
-        const btnPrev = document.getElementById('btnPrev');
-        const btnNext = document.getElementById('btnNext');
-        const btnPlay = document.getElementById('btnPlay');
-        const playIcon = document.getElementById('playIcon');
-        const playerArtist = document.getElementById('playerArtist');
-        const playerTitle = document.getElementById('playerTitle');
-        const playerThumb = document.getElementById('playerThumb').querySelector('img');
-        const progressFill = document.getElementById('progressFill');
-        const progressTime = document.getElementById('progressTime');
-        const progressBar = document.getElementById('progressBar');
-        const waveform = document.getElementById('waveform');
-        const carouselPrev = document.getElementById('carouselPrev');
-        const carouselNext = document.getElementById('carouselNext');
-
-        // ============================================================
-        // RENDER CAROUSEL
-        // ============================================================
-        function renderCarousel(centerIdx) {
-            const total = songData.length;
-            const cards = [];
-
-            for (let i = 0; i < total; i++) {
-                const diff = i - centerIdx;
-                let className = 'card';
-
-                if (diff === 0) className += ' active';
-                else if (diff === -1) className += ' left';
-                else if (diff === 1) className += ' right';
-                else if (diff < -1) className += ' hidden-left';
-                else if (diff > 1) className += ' hidden-right';
-
-                const song = songData[i];
-                const coverUrl = song.cover ||
-                    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop&crop=center';
-
-                cards.push(`
-                    <div class="${className}" data-index="${i}">
-                        <div class="card-img">
-                            <img src="${coverUrl}" alt="${song.artist} - ${song.title}" loading="lazy" />
-                        </div>
-                        <div class="card-body">
-                            <span class="artist">${song.artist}</span>
-                            <span class="title">${song.title}</span>
-                        </div>
-                    </div>
-                `);
+        function shuffleArray(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
             }
+            return a;
+        }
 
-            track.innerHTML = cards.join('');
+        // ============================================================
+        // 1. FEATURED CAROUSEL
+        // ============================================================
+        const carouselData = getSubset(songData, 0, 7);
+        // buat "CHANGES" merah di posisi tengah (index 3)
+        const changesItem = {
+            artist: "CHANGES",
+            title: "CHANGES",
+            cover: "", // akan pakai placeholder merah
+            isChanges: true
+        };
+        const featuredItems = [...carouselData];
+        featuredItems[3] = changesItem;
 
-            // Click on card to jump
-            track.querySelectorAll('.card').forEach((el) => {
-                const idx = parseInt(el.dataset.index, 10);
-                el.addEventListener('click', () => {
-                    if (idx !== currentIndex) {
-                        currentIndex = idx;
-                        renderCarousel(currentIndex);
-                        loadSong(currentIndex);
+        const carouselEl = document.getElementById('featuredCarousel');
+        const dotsEl = document.getElementById('carouselDots');
+
+        function renderFeatured() {
+            carouselEl.innerHTML = '';
+            featuredItems.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'featured-item' + (idx === 3 ? ' active' : '');
+                div.dataset.index = idx;
+
+                const img = document.createElement('img');
+                if (item.isChanges) {
+                    // solid red placeholder untuk CHANGES
+                    img.src =
+                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"%3E%3Crect width="400" height="400" fill="%23cc2233"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="40" font-weight="bold" fill="white" text-anchor="middle" dy=".3em"%3ECHANGES%3C/text%3E%3C/svg%3E';
+                    img.alt = 'CHANGES';
+                } else {
+                    img.src = item.cover || 'https://placehold.co/400x400/2a2f3e/ffffff?text=No+Cover';
+                    img.alt = item.title;
+                }
+                img.loading = 'lazy';
+                div.appendChild(img);
+
+                // overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'featured-overlay';
+                const titleSpan = document.createElement('div');
+                titleSpan.className = 'f-title';
+                titleSpan.textContent = item.isChanges ? 'CHANGES' : item.title;
+                const artistSpan = document.createElement('div');
+                artistSpan.className = 'f-artist';
+                artistSpan.textContent = item.isChanges ? 'Featured Album' : item.artist;
+                overlay.appendChild(titleSpan);
+                overlay.appendChild(artistSpan);
+                div.appendChild(overlay);
+
+                // badge
+                if (idx === 3) {
+                    const badge = document.createElement('div');
+                    badge.className = 'featured-badge featured-red';
+                    badge.textContent = '★ Featured';
+                    div.appendChild(badge);
+                } else if (idx === 0 || idx === 6) {
+                    const badge = document.createElement('div');
+                    badge.className = 'featured-badge';
+                    badge.textContent = 'New';
+                    div.appendChild(badge);
+                }
+
+                carouselEl.appendChild(div);
+            });
+
+            // dots
+            dotsEl.innerHTML = '';
+            featuredItems.forEach((_, idx) => {
+                const dot = document.createElement('span');
+                dot.className = 'dot' + (idx === 3 ? ' active' : '');
+                dot.dataset.index = idx;
+                dot.addEventListener('click', () => {
+                    const target = carouselEl.querySelector(`.featured-item[data-index="${idx}"]`);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                     }
                 });
+                dotsEl.appendChild(dot);
+            });
+        }
+
+        // update dots on scroll
+        function updateFeaturedDots() {
+            const items = carouselEl.querySelectorAll('.featured-item');
+            const dots = dotsEl.querySelectorAll('.dot');
+            const containerRect = carouselEl.getBoundingClientRect();
+            let activeIndex = 0;
+            let maxVisibleArea = 0;
+            items.forEach((item, idx) => {
+                const rect = item.getBoundingClientRect();
+                const visibleLeft = Math.max(0, rect.left - containerRect.left);
+                const visibleRight = Math.min(containerRect.width, rect.right - containerRect.left);
+                const visibleArea = Math.max(0, visibleRight - visibleLeft);
+                if (visibleArea > maxVisibleArea) {
+                    maxVisibleArea = visibleArea;
+                    activeIndex = idx;
+                }
+            });
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === activeIndex);
+            });
+            items.forEach((item, idx) => {
+                item.classList.toggle('active', idx === activeIndex);
             });
         }
 
         // ============================================================
-        // AUDIO PLAYER
+        // 2. NEW RELEASES
         // ============================================================
-        function loadSong(index) {
-            const song = songData[index];
-            if (!song) return;
-            currentSong = song;
+        const newReleasesData = getSubset(songData, 2, 8);
+        const releasesScroll = document.getElementById('newReleasesScroll');
 
-            audio.pause();
-            audio.src = song.src;
-            audio.load();
+        function renderNewReleases() {
+            releasesScroll.innerHTML = '';
+            newReleasesData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'release-card';
 
-            playerArtist.textContent = song.artist;
-            playerTitle.textContent = song.title;
-            const cover = song.cover ||
-                'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=120&h=120&fit=crop&crop=center';
-            playerThumb.src = cover;
+                const imgWrap = document.createElement('div');
+                imgWrap.className = 'rc-image';
+                const img = document.createElement('img');
+                img.src = item.cover || 'https://placehold.co/400x400/2a2f3e/ffffff?text=No+Cover';
+                img.alt = item.title;
+                img.loading = 'lazy';
+                imgWrap.appendChild(img);
+                card.appendChild(imgWrap);
 
-            progressFill.style.width = '0%';
-            progressTime.textContent = '0:00';
+                const title = document.createElement('div');
+                title.className = 'rc-title';
+                title.textContent = item.title;
+                card.appendChild(title);
 
-            // Update active card in carousel
-            if (currentIndex !== index) {
-                currentIndex = index;
-                renderCarousel(currentIndex);
-            } else {
-                renderCarousel(currentIndex);
-            }
+                const artist = document.createElement('div');
+                artist.className = 'rc-artist';
+                artist.textContent = item.artist;
+                card.appendChild(artist);
 
-            if (isPlaying) {
-                audio.play().catch(() => {});
-            }
-        }
+                const tag = document.createElement('div');
+                tag.className = 'rc-tag';
+                tag.textContent = 'Single';
+                card.appendChild(tag);
 
-        function togglePlay() {
-            if (!currentSong) {
-                loadSong(currentIndex);
-                return;
-            }
-
-            if (isPlaying) {
-                audio.pause();
-            } else {
-                audio.play().catch(() => {});
-            }
-        }
-
-        function prevSong() {
-            const prev = (currentIndex - 1 + songData.length) % songData.length;
-            currentIndex = prev;
-            loadSong(prev);
-            if (isPlaying) {
-                audio.play().catch(() => {});
-            }
-        }
-
-        function nextSong() {
-            const next = (currentIndex + 1) % songData.length;
-            currentIndex = next;
-            loadSong(next);
-            if (isPlaying) {
-                audio.play().catch(() => {});
-            }
+                releasesScroll.appendChild(card);
+            });
         }
 
         // ============================================================
-        // UI UPDATE
+        // 3. TRENDING NOW
         // ============================================================
-        function updatePlayButton() {
-            if (isPlaying) {
-                playIcon.className = 'fas fa-pause';
-                waveform.classList.add('playing');
-            } else {
-                playIcon.className = 'fas fa-play';
-                waveform.classList.remove('playing');
-            }
+        const trendingData = getSubset(songData, 6, 6);
+        const trendingList = document.getElementById('trendingList');
+
+        function renderTrending() {
+            trendingList.innerHTML = '';
+            trendingData.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'trending-card';
+
+                const imgWrap = document.createElement('div');
+                imgWrap.className = 'tc-image';
+                const img = document.createElement('img');
+                img.src = item.cover || 'https://placehold.co/400x400/2a2f3e/ffffff?text=No+Cover';
+                img.alt = item.title;
+                img.loading = 'lazy';
+                imgWrap.appendChild(img);
+                card.appendChild(imgWrap);
+
+                const info = document.createElement('div');
+                info.className = 'tc-info';
+                const title = document.createElement('div');
+                title.className = 'tc-title';
+                title.textContent = item.title;
+                const artist = document.createElement('div');
+                artist.className = 'tc-artist';
+                artist.textContent = item.artist;
+                info.appendChild(title);
+                info.appendChild(artist);
+                card.appendChild(info);
+
+                const actions = document.createElement('div');
+                actions.className = 'tc-actions';
+                const heartBtn = document.createElement('button');
+                heartBtn.className = 'tc-icon';
+                heartBtn.innerHTML = '<i class="far fa-heart"></i>';
+                heartBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const icon = heartBtn.querySelector('i');
+                    icon.classList.toggle('far');
+                    icon.classList.toggle('fas');
+                    icon.classList.toggle('fa-heart');
+                    heartBtn.classList.toggle('heart-active');
+                });
+                const moreBtn = document.createElement('button');
+                moreBtn.className = 'tc-icon';
+                moreBtn.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
+                moreBtn.addEventListener('click', (e) => e.stopPropagation());
+                actions.appendChild(heartBtn);
+                actions.appendChild(moreBtn);
+                card.appendChild(actions);
+
+                trendingList.appendChild(card);
+            });
         }
 
-        function updateProgress() {
-            if (!audio.duration) return;
-            const pct = (audio.currentTime / audio.duration) * 100;
-            progressFill.style.width = pct + '%';
+        // ============================================================
+        // 4. DARK MODE TOGGLE
+        // ============================================================
+        const darkToggle = document.getElementById('darkModeToggle');
+        let darkMode = false;
+        darkToggle.addEventListener('click', () => {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            const icon = darkToggle.querySelector('i');
+            icon.className = darkMode ? 'fas fa-sun' : 'fas fa-moon';
+        });
 
-            const m = Math.floor(audio.currentTime / 60);
-            const s = Math.floor(audio.currentTime % 60);
-            progressTime.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        // ============================================================
+        // 5. BOTTOM NAV
+        // ============================================================
+        const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+        navItems.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navItems.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // 6. CAROUSEL SCROLL DETECTION + INIT
+        // ============================================================
+        function init() {
+            renderFeatured();
+            renderNewReleases();
+            renderTrending();
+
+            // debounce untuk carousel scroll
+            let scrollTimeout;
+            carouselEl.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(updateFeaturedDots, 80);
+            });
+
+            // update setelah layout stabil
+            requestAnimationFrame(() => {
+                updateFeaturedDots();
+                // scroll ke tengah (CHANGES)
+                const centerItem = carouselEl.querySelector('.featured-item.active');
+                if (centerItem) {
+                    centerItem.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+                }
+            });
+
+            // update on resize
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(updateFeaturedDots, 200);
+            });
         }
 
-        // ============================================================
-        // EVENT BINDING
-        // ============================================================
-        // Play / Pause
-        btnPlay.addEventListener('click', togglePlay);
-
-        // Prev / Next
-        btnPrev.addEventListener('click', prevSong);
-        btnNext.addEventListener('click', nextSong);
-        carouselPrev.addEventListener('click', prevSong);
-        carouselNext.addEventListener('click', nextSong);
-
-        // Audio events
-        audio.addEventListener('play', () => {
-            isPlaying = true;
-            updatePlayButton();
-        });
-
-        audio.addEventListener('pause', () => {
-            isPlaying = false;
-            updatePlayButton();
-        });
-
-        audio.addEventListener('ended', () => {
-            isPlaying = false;
-            updatePlayButton();
-            nextSong();
-        });
-
-        audio.addEventListener('timeupdate', updateProgress);
-
-        // Click on progress bar to seek
-        progressBar.addEventListener('click', (e) => {
-            if (!audio.duration) return;
-            const rect = progressBar.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = x * audio.duration;
-        });
-
-        // Keyboard shortcuts (space = play/pause)
-        document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            if (e.code === 'Space') {
-                e.preventDefault();
-                togglePlay();
-            }
-            if (e.code === 'ArrowRight') {
-                e.preventDefault();
-                nextSong();
-            }
-            if (e.code === 'ArrowLeft') {
-                e.preventDefault();
-                prevSong();
-            }
-        });
-
-        // ============================================================
-        // INIT
-        // ============================================================
-        renderCarousel(0);
-        loadSong(0);
-        updatePlayButton();
-
-        // If audio fails to load, fallback gracefully
-        audio.addEventListener('error', () => {
-            // silent fallback
-        });
-
-        console.log('🎵 Glassmorphism Music Player ready.');
+        // jalankan setelah DOM siap
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 
 </body>
 </html>
+```
