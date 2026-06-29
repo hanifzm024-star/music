@@ -340,12 +340,17 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 6px 24px rgba(0, 0, 0, 0.20);
             padding: 10px 10px 12px 10px;
-            transition: transform 0.25s, box-shadow 0.25s;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.3s;
             cursor: pointer;
         }
 
         .release-card:active {
             transform: scale(0.96);
+        }
+
+        .release-card.playing {
+            border-color: #6c8cff;
+            box-shadow: 0 0 0 2px rgba(108, 140, 255, 0.5), 0 8px 30px rgba(0, 0, 0, 0.4);
         }
 
         .release-card .rc-image {
@@ -356,6 +361,7 @@
             background: #1a1f2e;
             margin-bottom: 8px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+            position: relative;
         }
 
         .release-card .rc-image img {
@@ -363,6 +369,29 @@
             height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        /* play overlay on card image */
+        .release-card .rc-image .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 10px;
+        }
+
+        .release-card:hover .rc-image .play-overlay {
+            opacity: 1;
+        }
+
+        .release-card .rc-image .play-overlay i {
+            font-size: 28px;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
         }
 
         .release-card .rc-title {
@@ -429,12 +458,17 @@
             -webkit-backdrop-filter: blur(var(--glass-blur));
             border: 1px solid var(--glass-border);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
             cursor: pointer;
         }
 
         .trending-card:active {
             transform: scale(0.98);
+        }
+
+        .trending-card.playing {
+            border-color: #6c8cff;
+            box-shadow: 0 0 0 2px rgba(108, 140, 255, 0.4), 0 6px 24px rgba(0, 0, 0, 0.3);
         }
 
         .trending-card .tc-image {
@@ -445,6 +479,7 @@
             overflow: hidden;
             background: #1a1f2e;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+            position: relative;
         }
 
         .trending-card .tc-image img {
@@ -452,6 +487,28 @@
             height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        .trending-card .tc-image .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 10px;
+        }
+
+        .trending-card:hover .tc-image .play-overlay {
+            opacity: 1;
+        }
+
+        .trending-card .tc-image .play-overlay i {
+            font-size: 22px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
         }
 
         .trending-card .tc-info {
@@ -721,6 +778,110 @@
         .app>*:nth-child(6) {
             animation-delay: 0.40s;
         }
+
+        /* mini player indicator */
+        .now-playing-indicator {
+            position: fixed;
+            bottom: calc(var(--nav-height) + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            padding: 8px 18px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 99;
+            max-width: 90%;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .now-playing-indicator.visible {
+            display: flex;
+            pointer-events: auto;
+        }
+
+        .now-playing-indicator .np-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+            min-width: 0;
+        }
+
+        .now-playing-indicator .np-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .now-playing-indicator .np-artist {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .now-playing-indicator .np-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .now-playing-indicator .np-controls button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .now-playing-indicator .np-controls button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .now-playing-indicator .np-controls button:active {
+            transform: scale(0.9);
+        }
+
+        /* progress bar */
+        .now-playing-indicator .np-progress {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            min-width: 60px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .now-playing-indicator .np-progress .np-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6c8cff, #a78bfa);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        @media (max-width: 420px) {
+            .now-playing-indicator .np-progress {
+                min-width: 40px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -782,7 +943,7 @@
             <i class="fas fa-th-list"></i>
             <span>Library</span>
         </button>
-        <button class="nav-item nav-center" data-tab="player">
+        <button class="nav-item nav-center" data-tab="player" id="navPlayerBtn">
             <i class="fas fa-headphones"></i>
             <span>Player</span>
         </button>
@@ -796,9 +957,26 @@
         </button>
     </nav>
 
+    <!-- ===== AUDIO PLAYER & NOW PLAYING INDICATOR ===== -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+
+    <div class="now-playing-indicator" id="nowPlayingIndicator">
+        <div class="np-info">
+            <div class="np-title" id="npTitle">Title</div>
+            <div class="np-artist" id="npArtist">Artist</div>
+        </div>
+        <div class="np-progress" id="npProgress">
+            <div class="np-progress-fill" id="npProgressFill"></div>
+        </div>
+        <div class="np-controls">
+            <button id="npPlayPauseBtn"><i class="fas fa-pause"></i></button>
+            <button id="npCloseBtn"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
     <script>
         // ============================================================
-        // DATA LAGU + COVER (dari spec)
+        // DATA LAGU + COVER
         // ============================================================
         const songData = [{
             artist: "Ariana Grande",
@@ -928,7 +1106,154 @@
         }];
 
         // ============================================================
-        // UTILITY: ambil subset / shuffle
+        // REPLACE SRC WITH DEMO URL (karena file aset tidak tersedia)
+        // ============================================================
+        const DEMO_BASE = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-';
+        songData.forEach((item, i) => {
+            // gunakan 1-10, mod 10 +1
+            const num = (i % 10) + 1;
+            item.src = `${DEMO_BASE}${num}.mp3`;
+        });
+
+        // ============================================================
+        // AUDIO PLAYER & STATE
+        // ============================================================
+        const audio = document.getElementById('audioPlayer');
+        const indicator = document.getElementById('nowPlayingIndicator');
+        const npTitle = document.getElementById('npTitle');
+        const npArtist = document.getElementById('npArtist');
+        const npPlayPauseBtn = document.getElementById('npPlayPauseBtn');
+        const npCloseBtn = document.getElementById('npCloseBtn');
+        const npProgressFill = document.getElementById('npProgressFill');
+        const npProgress = document.getElementById('npProgress');
+
+        let currentIndex = null;
+        let isPlaying = false;
+
+        // ============================================================
+        // FUNGSI PLAY / PAUSE
+        // ============================================================
+        function playSong(index) {
+            if (index === null || index < 0 || index >= songData.length) return;
+            const song = songData[index];
+
+            // jika sama dan sedang diputar, pause
+            if (currentIndex === index && isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                updateNowPlayingUI(false);
+                updateCardPlayingState(index, false);
+                return;
+            }
+
+            // jika sama dan pause, lanjutkan
+            if (currentIndex === index && !isPlaying) {
+                audio.play();
+                isPlaying = true;
+                updateNowPlayingUI(true);
+                updateCardPlayingState(index, true);
+                return;
+            }
+
+            // lagu baru
+            currentIndex = index;
+            audio.src = song.src;
+            audio.load();
+            audio.play().catch(() => {});
+            isPlaying = true;
+            updateNowPlayingUI(true);
+            updateCardPlayingState(index, true);
+            // update indicator info
+            npTitle.textContent = song.title;
+            npArtist.textContent = song.artist;
+            indicator.classList.add('visible');
+        }
+
+        function togglePlayPause() {
+            if (currentIndex === null) return;
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                audio.play();
+                isPlaying = true;
+            }
+            updateNowPlayingUI(isPlaying);
+            updateCardPlayingState(currentIndex, isPlaying);
+        }
+
+        function updateNowPlayingUI(playing) {
+            const icon = npPlayPauseBtn.querySelector('i');
+            if (playing) {
+                icon.className = 'fas fa-pause';
+            } else {
+                icon.className = 'fas fa-play';
+            }
+        }
+
+        function updateCardPlayingState(index, playing) {
+            // hapus semua kelas playing
+            document.querySelectorAll('.release-card, .trending-card').forEach(el => el.classList.remove('playing'));
+            if (playing && index !== null) {
+                // cari kartu dengan data-index
+                document.querySelectorAll(`.release-card[data-index="${index}"], .trending-card[data-index="${index}"]`)
+                    .forEach(el => el.classList.add('playing'));
+            }
+        }
+
+        // ============================================================
+        // EVENT AUDIO
+        // ============================================================
+        audio.addEventListener('timeupdate', () => {
+            if (audio.duration) {
+                const pct = (audio.currentTime / audio.duration) * 100;
+                npProgressFill.style.width = pct + '%';
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            isPlaying = false;
+            updateNowPlayingUI(false);
+            updateCardPlayingState(currentIndex, false);
+            // auto play next? kita tidak lakukan, biar berhenti
+        });
+
+        // klik progress untuk seek
+        npProgress.addEventListener('click', (e) => {
+            if (!audio.duration) return;
+            const rect = npProgress.getBoundingClientRect();
+            const pct = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = pct * audio.duration;
+        });
+
+        // ============================================================
+        // UI CONTROLS
+        // ============================================================
+        npPlayPauseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePlayPause();
+        });
+
+        npCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            audio.pause();
+            isPlaying = false;
+            currentIndex = null;
+            indicator.classList.remove('visible');
+            updateCardPlayingState(null, false);
+            updateNowPlayingUI(false);
+            npProgressFill.style.width = '0%';
+        });
+
+        // klik indicator untuk expand (bisa ke player penuh, tapi kita skip)
+        indicator.addEventListener('click', (e) => {
+            if (e.target.closest('.np-controls') || e.target.closest('.np-progress')) return;
+            // toggle play/pause
+            togglePlayPause();
+        });
+
+        // ============================================================
+        // RENDER FUNCTIONS (dengan event play)
         // ============================================================
         function getSubset(arr, start, count) {
             return arr.slice(start, start + count);
@@ -943,16 +1268,14 @@
             return a;
         }
 
-        // ============================================================
-        // 1. FEATURED CAROUSEL
-        // ============================================================
+        // ===== FEATURED CAROUSEL =====
         const carouselData = getSubset(songData, 0, 7);
-        // buat "CHANGES" merah di posisi tengah (index 3)
         const changesItem = {
             artist: "CHANGES",
             title: "CHANGES",
-            cover: "", // akan pakai placeholder merah
-            isChanges: true
+            cover: "",
+            isChanges: true,
+            src: ""
         };
         const featuredItems = [...carouselData];
         featuredItems[3] = changesItem;
@@ -969,9 +1292,8 @@
 
                 const img = document.createElement('img');
                 if (item.isChanges) {
-                    // solid red placeholder untuk CHANGES
                     img.src =
-                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"%3E%3Crect width="400" height="400" fill="%23cc2233"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="40" font-weight="bold" fill="white" text-anchor="middle" dy=".3em"%3ECHANGES%3C/text%3E%3C/svg%3E';
+                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"%3E%3Crect width="400" height="400" fill="%23cc2233"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="40" font-weight="bold" fill="white" text-anchor="middle" dy=".3em"%3ECHANGES%3C/text%3E%3C/svg%3E';
                     img.alt = 'CHANGES';
                 } else {
                     img.src = item.cover || 'https://placehold.co/400x400/2a2f3e/ffffff?text=No+Cover';
@@ -980,7 +1302,6 @@
                 img.loading = 'lazy';
                 div.appendChild(img);
 
-                // overlay
                 const overlay = document.createElement('div');
                 overlay.className = 'featured-overlay';
                 const titleSpan = document.createElement('div');
@@ -993,7 +1314,6 @@
                 overlay.appendChild(artistSpan);
                 div.appendChild(overlay);
 
-                // badge
                 if (idx === 3) {
                     const badge = document.createElement('div');
                     badge.className = 'featured-badge featured-red';
@@ -1006,10 +1326,21 @@
                     div.appendChild(badge);
                 }
 
+                // klik untuk play (kecuali CHANGES karena bukan lagu nyata)
+                if (!item.isChanges) {
+                    div.style.cursor = 'pointer';
+                    div.addEventListener('click', () => {
+                        // cari indeks asli di songData
+                        const realIndex = songData.findIndex(s => s.title === item.title && s.artist === item.artist);
+                        if (realIndex !== -1) {
+                            playSong(realIndex);
+                        }
+                    });
+                }
+
                 carouselEl.appendChild(div);
             });
 
-            // dots
             dotsEl.innerHTML = '';
             featuredItems.forEach((_, idx) => {
                 const dot = document.createElement('span');
@@ -1025,7 +1356,6 @@
             });
         }
 
-        // update dots on scroll
         function updateFeaturedDots() {
             const items = carouselEl.querySelectorAll('.featured-item');
             const dots = dotsEl.querySelectorAll('.dot');
@@ -1050,17 +1380,17 @@
             });
         }
 
-        // ============================================================
-        // 2. NEW RELEASES
-        // ============================================================
+        // ===== NEW RELEASES =====
         const newReleasesData = getSubset(songData, 2, 8);
         const releasesScroll = document.getElementById('newReleasesScroll');
 
         function renderNewReleases() {
             releasesScroll.innerHTML = '';
-            newReleasesData.forEach(item => {
+            newReleasesData.forEach((item, index) => {
+                const realIndex = songData.findIndex(s => s.title === item.title && s.artist === item.artist);
                 const card = document.createElement('div');
                 card.className = 'release-card';
+                card.dataset.index = realIndex;
 
                 const imgWrap = document.createElement('div');
                 imgWrap.className = 'rc-image';
@@ -1069,6 +1399,13 @@
                 img.alt = item.title;
                 img.loading = 'lazy';
                 imgWrap.appendChild(img);
+
+                // play overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'play-overlay';
+                overlay.innerHTML = '<i class="fas fa-play"></i>';
+                imgWrap.appendChild(overlay);
+
                 card.appendChild(imgWrap);
 
                 const title = document.createElement('div');
@@ -1086,21 +1423,25 @@
                 tag.textContent = 'Single';
                 card.appendChild(tag);
 
+                card.addEventListener('click', () => {
+                    if (realIndex !== -1) playSong(realIndex);
+                });
+
                 releasesScroll.appendChild(card);
             });
         }
 
-        // ============================================================
-        // 3. TRENDING NOW
-        // ============================================================
+        // ===== TRENDING NOW =====
         const trendingData = getSubset(songData, 6, 6);
         const trendingList = document.getElementById('trendingList');
 
         function renderTrending() {
             trendingList.innerHTML = '';
             trendingData.forEach((item, idx) => {
+                const realIndex = songData.findIndex(s => s.title === item.title && s.artist === item.artist);
                 const card = document.createElement('div');
                 card.className = 'trending-card';
+                card.dataset.index = realIndex;
 
                 const imgWrap = document.createElement('div');
                 imgWrap.className = 'tc-image';
@@ -1109,6 +1450,12 @@
                 img.alt = item.title;
                 img.loading = 'lazy';
                 imgWrap.appendChild(img);
+
+                const overlay = document.createElement('div');
+                overlay.className = 'play-overlay';
+                overlay.innerHTML = '<i class="fas fa-play"></i>';
+                imgWrap.appendChild(overlay);
+
                 card.appendChild(imgWrap);
 
                 const info = document.createElement('div');
@@ -1144,12 +1491,16 @@
                 actions.appendChild(moreBtn);
                 card.appendChild(actions);
 
+                card.addEventListener('click', () => {
+                    if (realIndex !== -1) playSong(realIndex);
+                });
+
                 trendingList.appendChild(card);
             });
         }
 
         // ============================================================
-        // 4. DARK MODE TOGGLE
+        // DARK MODE TOGGLE
         // ============================================================
         const darkToggle = document.getElementById('darkModeToggle');
         let darkMode = false;
@@ -1161,42 +1512,42 @@
         });
 
         // ============================================================
-        // 5. BOTTOM NAV
+        // BOTTOM NAV (player button toggle play/pause)
         // ============================================================
         const navItems = document.querySelectorAll('.bottom-nav .nav-item');
         navItems.forEach(btn => {
             btn.addEventListener('click', () => {
                 navItems.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                if (btn.dataset.tab === 'player') {
+                    // toggle play/pause
+                    togglePlayPause();
+                }
             });
         });
 
         // ============================================================
-        // 6. CAROUSEL SCROLL DETECTION + INIT
+        // INIT
         // ============================================================
         function init() {
             renderFeatured();
             renderNewReleases();
             renderTrending();
 
-            // debounce untuk carousel scroll
             let scrollTimeout;
             carouselEl.addEventListener('scroll', () => {
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(updateFeaturedDots, 80);
             });
 
-            // update setelah layout stabil
             requestAnimationFrame(() => {
                 updateFeaturedDots();
-                // scroll ke tengah (CHANGES)
                 const centerItem = carouselEl.querySelector('.featured-item.active');
                 if (centerItem) {
                     centerItem.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
                 }
             });
 
-            // update on resize
             let resizeTimer;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimer);
@@ -1204,14 +1555,11 @@
             });
         }
 
-        // jalankan setelah DOM siap
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
             init();
         }
     </script>
-
 </body>
 </html>
-```
